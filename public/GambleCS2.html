@@ -14,36 +14,44 @@
       <div class="user-section">
         <img src="img/user.png" alt="Usuário" class="user-icon">
         <span id="user-name">Guest</span>
-      </div>
-    </div>
-    <!-- Modal de Login e Cadastro -->
-    <div class="modal" id="login-modal">
-      <div class="modal-content">
-        <h2>Login ou Cadastro</h2>
-        <form id="loginForm">
-          <input type="text" id="username" placeholder="Nome de usuário" required>
-          <input type="password" id="password" placeholder="Senha" required>
-          <button type="submit">Entrar</button>
-        </form>
-        <p>Ou</p>
-        <button id="registerBtn">Criar uma conta</button>
+        <span id="user-saldo">Saldo: R$0</span>
+        <button id="login-register-btn">Entrar/Cadastrar</button>
+        <button id="add-saldo-btn" style="display: none;">Adicionar Saldo</button>
+        <button id="logout-btn" style="display: none;">Sair</button>
       </div>
     </div>
   </header>
 
-  <!-- Grid de caixas -->
+  <!-- Modal -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-title">Login</h2>
+      <form id="loginForm">
+        <input type="text" id="username" placeholder="Nome de usuário" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+      </form>
+      <form id="registerForm" style="display: none;">
+        <input type="text" id="register-username" placeholder="Nome de usuário" required>
+        <input type="password" id="register-password" placeholder="Senha" required>
+        <button type="submit">Cadastrar</button>
+      </form>
+      <div>
+        <button id="show-register" class="secondary-btn">Cadastrar</button>
+        <button id="show-login" class="secondary-btn" style="display: none;">Já tem conta? Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid Container -->
   <main>
-    <section class="grid-container">
-      <!-- Exemplo de uma caixa -->
-     
-      <!-- Adicione mais caixas aqui -->
-    </section>
+    <section class="grid-container"></section>
   </main>
 
   <footer>
     <p>&copy; 2024 CSGO Styled Grid</p>
   </footer>
 
-  <script src="scriptMain.js"></script>
+  <script src="scriptMain.js" defer></script>
 </body>
 </html>

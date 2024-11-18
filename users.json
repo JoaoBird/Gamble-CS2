@@ -1,0 +1,9 @@
+[
+    {
+      "username": "Joao",
+      "password": "1234",
+      "saldo": 100,
+      "itens": ["Item1", "Item2"]
+    }
+  ]
+  

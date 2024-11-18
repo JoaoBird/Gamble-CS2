@@ -1,5 +1,9 @@
 // Identifique o ID da caixa a partir do HTML
-const boxId = document.body.getAttribute("data-box-id");
+const boxId = document.body.getAttribute("data-box-id") || null;
+if (!boxId) {
+  console.error("Box ID não encontrado.");
+}
+
 
 // Lista de itens para todas as caixas
 const items = {
