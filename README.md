@@ -1,0 +1,1 @@
+O objetivo desse site e criar uma copia do csgo.net para entrega de um trabalho academico, entretanto nao viso lucro, apenas criei por desafio pessoal(tambem por isso nao foquei em seguranca do site), site ainda em progresso 
