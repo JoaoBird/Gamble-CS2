@@ -15,11 +15,20 @@ body {
     align-items: center;
     color: white;
   }
+  .navbar h1 {
+    margin: 0;
+  }
   
   .user-section {
     display: flex;
     align-items: center;
     gap: 10px; /* Adiciona espaço entre os itens */
+  }
+  #profile-pic {
+    display: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
   }
   
   .user-icon {
@@ -34,41 +43,109 @@ body {
     font-weight: bold;
   }
   
+
+  button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: #fff;
+  }
   
-  /* Grid */
-/* Grid de caixas */
+  button:hover {
+    background-color: #218838;
+  }
+  
+
+  
+/* Grid layout */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Isso garante que as caixas ocupem uma coluna flexível */
-  gap: 1rem;
-  padding: 2rem;
-  margin-top: 2rem; /* Um pouco de espaço no topo */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
-/* Estilo das caixas */
-.grid-item {
-  background-color: #21262d;
+.item {
+  background: #333;
+  color: #fff;
   border-radius: 8px;
-  padding: 1rem;
   text-align: center;
-  transition: transform 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Adiciona uma sombra */
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
 }
 
-.grid-item:hover {
+.item:hover {
   transform: scale(1.05);
 }
 
-/* Caixa com imagem */
-.box-image {
-  max-width: 100%;
-  border-radius: 5px;
-  object-fit: cover;
+.roulette-animation {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 20px;
+  background: #222;
+  border: 1px solid #555;
+  border-radius: 10px;
+  height: 100px;
 }
 
-/* Informações da caixa */
-.box-info {
-  margin-top: 0.5rem;
+.roulette-animation div {
+  min-width: 100px;
+  height: 100px;
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+
+.grid-item {
+  background-color: #444;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.grid-item img {
+  max-width: 100%; /* Faz as imagens ficarem responsivas */
+  height: auto;
+  border-radius: 5px; /* Bordas arredondadas nas imagens */
+  margin-bottom: 10px;
+}
+
+.grid-item h3 {
+  color: #fff;
+  font-size: 1.2em;
+  margin: 10px 0;
+}
+
+.grid-item p {
+  color: #ccc;
+  font-size: 1em;
+  margin-bottom: 15px;
+}
+
+.grid-item button {
+  background-color: #4CAF50; /* Cor do botão */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.grid-item button:hover {
+  background-color: #45a049; /* Cor ao passar o mouse */
 }
 
   .open-box {
@@ -83,57 +160,179 @@ body {
   .open-box:hover {
     background-color: #2ea043;
   }
+  .open-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  #open-box-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .button-group button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .button-group button:hover,
+  #open-box-btn:hover {
+    background-color: #45a049;
+  }
   
   /* Modal */
-  .modal {
-    display: none; /* Modal começa escondido */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Fundo transparente */
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal.active {
-    display: flex; /* Mostra o modal quando a classe "active" é adicionada */
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-  }
-  
-  
+/* Estilo do modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+  border-radius: 10px;
+  position: center;
+  text-align: center;
+}
 
 .modal-content input {
-  padding: 0.8rem;
+  width: 100%; /* Ajusta para preencher todo o modal */
+  padding: 15px; /* Aumenta o espaçamento interno */
+  margin: 10px 0;
+  border: 1px solid #444;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  background-color: #333;
+  color: white;
+  font-size: 16px; /* Torna o texto mais visível */
 }
 
 .modal-content button {
-  background-color: #238636;
-  color: white;
-  padding: 1rem;
+  width: 60%; /* Aumenta a largura do botão */
+  padding: 10px;
+  background-color: #4CAF50;
   border: none;
   border-radius: 5px;
+  color: white;
+  font-size: 16px; /* Torna o texto do botão maior */
   cursor: pointer;
 }
 
 .modal-content button:hover {
-  background-color: #2ea043;
+  background-color: #45a049;
+}
+
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* Quando o modal estiver visível */
 .modal.show {
   display: flex;
+}
+
+#login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Fundo transparente escuro */
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: #222; /* Fundo do modal */
+  color: #fff;
+  padding: 20px;
+  border-radius: 15px; /* Tornar mais quadrado */
+  width: 300px; /* Ajusta a largura */
+  max-width: 90%; /* Evita que ultrapasse o tamanho da tela */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal-content input {
+  width: calc(100% - 20px); /* Deixe os campos maiores */
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: #fff;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #45a049;
+}
+
+.modal-content #close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
+
+
+
+
+footer {
+  background-color: #333;
+  color: #ccc;
+  text-align: center;
+  padding: 10px 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }

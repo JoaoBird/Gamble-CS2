@@ -1,5 +1,17 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.1"
-  }
+  },
+  "name": "gamble-cs2",
+  "version": "1.0.0",
+  "description": "O objetivo desse site e criar uma copia do csgo.net para entrega de um trabalho academico, entretanto nao viso lucro, apenas criei por desafio pessoal(tambem por isso nao foquei em seguranca do site), site ainda em progresso",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

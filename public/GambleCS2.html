@@ -7,49 +7,43 @@
   <link rel="stylesheet" href="styleMain.css">
 </head>
 <body>
-  <!-- Navbar -->
   <header>
-    <div class="navbar">
-      <h1>CS2 GAMBLE</h1>
-      <div class="user-section">
-        <img src="img/user.png" alt="Usuário" class="user-icon">
-        <span id="user-name">Guest</span>
-        <span id="user-saldo">Saldo: R$0</span>
-        <button id="login-register-btn">Entrar/Cadastrar</button>
-        <button id="add-saldo-btn" style="display: none;">Adicionar Saldo</button>
-        <button id="logout-btn" style="display: none;">Sair</button>
+    <h1>CS2 GAMBLE</h1>
+    <div id="user-info">
+      <img id="profile-pic" src="" alt="Foto de Perfil" style="display: none; border-radius: 50%; width: 50px; height: 50px;">
+
+      <span id="user-name">Guest</span>
+      <span id="user-saldo">Saldo: R$0.00</span>
+    </div>
+    <button id="login-register-btn">Entrar/Cadastrar</button>
+    <button id="add-saldo-btn" style="display: none;">Adicionar Saldo</button>
+    <button id="logout-btn" style="display: none;">Sair</button>
+    <div id="login-modal">
+      <div class="modal-content">
+        <span id="close-modal" style="cursor: pointer; font-size: 24px;">&times;</span>
+        <h2 id="modal-title">Entrar</h2>
+        <input id="usernameInput" type="text" placeholder="Usuário">
+        <input id="passwordInput" type="password" placeholder="Senha">
+        <button id="actionButton">Entrar</button>
+        <p id="toggleText">
+          Não tem conta? <span id="toggleLink" style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>
+        </p>
       </div>
     </div>
+    
+    
+    
+    
   </header>
 
-  <!-- Modal -->
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <h2 id="modal-title">Login</h2>
-      <form id="loginForm">
-        <input type="text" id="username" placeholder="Nome de usuário" required>
-        <input type="password" id="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
-      </form>
-      <form id="registerForm" style="display: none;">
-        <input type="text" id="register-username" placeholder="Nome de usuário" required>
-        <input type="password" id="register-password" placeholder="Senha" required>
-        <button type="submit">Cadastrar</button>
-      </form>
-      <div>
-        <button id="show-register" class="secondary-btn">Cadastrar</button>
-        <button id="show-login" class="secondary-btn" style="display: none;">Já tem conta? Login</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Grid Container -->
   <main>
-    <section class="grid-container"></section>
+    <div class="grid-container">
+      <!-- Caixas serão carregadas dinamicamente aqui -->
+    </div>
   </main>
 
   <footer>
-    <p>&copy; 2024 CSGO Styled Grid</p>
+    <p>&copy; 2024 CS2 GAMBLE</p>
   </footer>
 
   <script src="scriptMain.js" defer></script>

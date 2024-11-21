@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const registerForm = document.getElementById("registerForm");
   const loginModal = document.getElementById("login-modal");
   const loginRegisterBtn = document.getElementById("login-register-btn");
   const addSaldoBtn = document.getElementById("add-saldo-btn");
@@ -8,200 +6,162 @@ document.addEventListener("DOMContentLoaded", () => {
   const userNameDisplay = document.getElementById("user-name");
   const userSaldoDisplay = document.getElementById("user-saldo");
   const gridContainer = document.querySelector(".grid-container");
-  const showRegisterBtn = document.getElementById("show-register");
-  const showLoginBtn = document.getElementById("show-login");
+  const closeModalBtn = document.getElementById("close-modal");
+  const modalTitle = document.getElementById("modal-title");
+  const actionButton = document.getElementById("actionButton");
+  const toggleText = document.getElementById("toggleText");
+  const toggleLink = document.getElementById("toggleLink");
+  const usernameInput = document.getElementById("usernameInput");
+  const passwordInput = document.getElementById("passwordInput");
+  const profilePic = document.getElementById("profile-pic");
 
-  let currentUser = null;
+  let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  let isLoginMode = true; // Controla se está no modo de login ou cadastro
 
-  // Alternar entre formulários de login e cadastro
-  function switchToForm(type) {
-    if (type === "login") {
-      loginForm.style.display = "block";
-      registerForm.style.display = "none";
-      showRegisterBtn.style.display = "inline-block";
-      showLoginBtn.style.display = "none";
-    } else {
-      loginForm.style.display = "none";
-      registerForm.style.display = "block";
-      showRegisterBtn.style.display = "none";
-      showLoginBtn.style.display = "inline-block";
-    }
-  }
-
-  // Atualizar interface com base no estado do usuário
-  function updateUserInterface() {
-    if (currentUser) {
-      userNameDisplay.textContent = currentUser.username;
-      userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo}`;
-      loginRegisterBtn.style.display = "none";
-      addSaldoBtn.style.display = "inline-block";
-      logoutBtn.style.display = "inline-block";
-    } else {
-      userNameDisplay.textContent = "Guest";
-      userSaldoDisplay.textContent = "Saldo: R$0";
-      loginRegisterBtn.style.display = "inline-block";
-      addSaldoBtn.style.display = "none";
-      logoutBtn.style.display = "none";
-    }
-  }
-
-  // Função para popular as caixas no grid
-  function populateBoxes() {
-    const boxes = [
-      { name: "White and Bright", price: "R$5.45", id: "white-and-bright" },
-      { name: "Green Wood Dragon", price: "R$0.10", id: "green-wood-dragon" },
-    ];
-
-    // Limpar a grid antes de popular
-    gridContainer.innerHTML = "";
-
-    // Adicionar cada caixa ao grid
-    boxes.forEach((box) => {
-      const boxElement = document.createElement("div");
-      boxElement.className = "grid-item";
-      boxElement.innerHTML = `
-        <img src="img/box.png" alt="${box.name}">
-        <h3>${box.name}</h3>
-        <p>${box.price}</p>
-        <button class="enter-box-btn" data-id="${box.id}">Entrar na Caixa</button>
-      `;
-      gridContainer.appendChild(boxElement);
-    });
-
-    // Adicionar evento aos botões "Entrar na Caixa"
-    document.querySelectorAll(".enter-box-btn").forEach((button) => {
-      button.addEventListener("click", () => {
-        const boxId = button.getAttribute("data-id");
-        if (!currentUser) {
-          alert("Você precisa fazer login primeiro!");
-          return;
-        }
-
-        if (boxId === "white-and-bright") {
-          alert(`Bem-vindo à caixa White and Bright!`);
-        } else if (boxId === "green-wood-dragon") {
-          alert(`Bem-vindo à caixa Green Wood Dragon!`);
-        } else {
-          alert("Caixa ainda em desenvolvimento.");
-        }
-      });
-    });
-  }
-
-  // Abrir modal
-  loginRegisterBtn.addEventListener("click", () => {
-    loginModal.style.display = "block";
-    switchToForm("login");
+  // Alternar entre login e cadastro
+  toggleLink.addEventListener("click", () => {
+    isLoginMode = !isLoginMode;
+    modalTitle.textContent = isLoginMode ? "Entrar" : "Cadastrar";
+    actionButton.textContent = isLoginMode ? "Entrar" : "Cadastrar";
+    toggleText.innerHTML = isLoginMode
+      ? 'Não tem conta? <span style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>'
+      : 'Já tem conta? <span style="cursor: pointer; color: #4CAF50;">Entre</span>';
   });
 
-  // Fechar modal ao clicar fora
-  window.addEventListener("click", (event) => {
-    if (event.target === loginModal) {
+  // Ação do botão de login ou cadastro
+  actionButton.addEventListener("click", () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!username || !password) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    if (isLoginMode) {
+      // Lógica de login
+      const user = users.find((u) => u.username === username && u.password === password);
+      if (user) {
+        currentUser = user;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        alert(`Bem-vindo, ${user.username}!`);
+        loginModal.style.display = "none";
+        updateUserInterface();
+      } else {
+        alert("Usuário ou senha incorretos.");
+      }
+    } else {
+      // Lógica de cadastro
+      if (users.some((u) => u.username === username)) {
+        alert("Usuário já cadastrado.");
+      } else {
+        const newUser = { username, password, saldo: 0 };
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Usuário cadastrado com sucesso!");
+        isLoginMode = true; // Volta para o modo login
+        modalTitle.textContent = "Entrar";
+        actionButton.textContent = "Entrar";
+        toggleText.innerHTML =
+          'Não tem conta? <span style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>';
+      }
+    }
+  });
+
+  // Fecha o modal
+  closeModalBtn.addEventListener("click", () => {
+    loginModal.style.display = "none";
+  });
+
+  // Mostra o modal ao clicar no botão "Entrar/Cadastrar"
+  loginRegisterBtn.addEventListener("click", () => {
+    loginModal.style.display = "block";
+  });
+
+  // Fecha o modal ao clicar fora dele
+  window.addEventListener("click", (e) => {
+    if (e.target === loginModal) {
       loginModal.style.display = "none";
     }
   });
 
-  // Alternar para cadastro
-  showRegisterBtn.addEventListener("click", () => switchToForm("register"));
+  // Atualiza a interface do usuário
+  function updateUserInterface() {
+    if (currentUser && typeof currentUser.saldo === "number") {
+      // Atualiza as informações do usuário logado
+      userNameDisplay.textContent = currentUser.username;
+      userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
+      loginRegisterBtn.style.display = "none";
+      addSaldoBtn.style.display = "block";
+      logoutBtn.style.display = "block";
 
-  // Alternar para login
-  showLoginBtn.addEventListener("click", () => switchToForm("login"));
+      // Exibe imagem de perfil
+      profilePic.src = "path/to/default-user-image.png"; // Ajuste o caminho para a imagem padrão
+      profilePic.style.display = "block";
 
-  // Submissão do formulário de login
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    try {
-      const response = await fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+      // Adiciona evento para redirecionar ao perfil
+      profilePic.addEventListener("click", () => {
+        window.location.href = "profile.html";
       });
+    } else {
+      // Exibe interface para usuário não logado
+      userNameDisplay.textContent = "Guest";
+      userSaldoDisplay.textContent = "Saldo: R$0.00";
+      loginRegisterBtn.style.display = "block";
+      addSaldoBtn.style.display = "none";
+      logoutBtn.style.display = "none";
 
-      const data = await response.json();
-
-      if (data.success) {
-        currentUser = data.user;
-        alert("Login realizado com sucesso!");
-        loginModal.style.display = "none";
-        updateUserInterface();
-      } else {
-        alert(data.message || "Erro ao fazer login.");
-      }
-    } catch (error) {
-      console.error("Erro no login:", error);
-      alert("Erro ao conectar com o servidor.");
+      profilePic.style.display = "none";
     }
-  });
+    populateBoxes();
+  }
 
-  // Submissão do formulário de cadastro
-  registerForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const username = document.getElementById("register-username").value;
-    const password = document.getElementById("register-password").value;
+  // Popula as caixas disponíveis
+  function populateBoxes() {
+    const boxes = [
+      { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "pages/img-pag/box1.png" },
+      { name: "Green Wood Dragon", price: 0.10, id: "green-wood-dragon", image: "img/box2.png" },
+      { name: "Mystery Box", price: 10.00, id: "mystery-box", image: "img/box3.png" },
+    ];
 
-    try {
-      const response = await fetch("/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        alert("Usuário registrado com sucesso!");
-        switchToForm("login");
-      } else {
-        alert(data.message || "Erro no cadastro.");
-      }
-    } catch (error) {
-      console.error("Erro no cadastro:", error);
-      alert("Erro ao conectar com o servidor.");
-    }
-  });
-
-  // Logout do usuário
-  logoutBtn.addEventListener("click", () => {
-    currentUser = null;
-    alert("Você saiu da conta!");
-    updateUserInterface();
-  });
-
-  // Adicionar saldo
-  addSaldoBtn.addEventListener("click", async () => {
-    if (!currentUser) {
-      alert("Você precisa fazer login primeiro!");
-      return;
-    }
-
-    const amount = prompt("Quanto deseja adicionar?");
-    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
-      alert("Por favor, insira um valor válido.");
-      return;
-    }
-
-    const response = await fetch("/addSaldo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: currentUser.username, amount: parseFloat(amount) }),
+    gridContainer.innerHTML = ""; // Limpa o conteúdo existente
+    boxes.forEach((box) => {
+      const boxElement = document.createElement("div");
+      boxElement.className = "grid-item";
+      boxElement.innerHTML = `
+        <img src="${box.image}" alt="${box.name}">
+        <h3>${box.name}</h3>
+        <p>R$${box.price.toFixed(2)}</p>
+        <button class="enter-box-btn" data-id="${box.id}" ${currentUser ? "" : "disabled"}>Entrar na Caixa</button>
+      `;
+      gridContainer.appendChild(boxElement);
     });
 
-    const data = await response.json();
-    if (data.success) {
-      currentUser.saldo = data.saldo;
-      alert(`Saldo atualizado com sucesso! Novo saldo: R$${currentUser.saldo}`);
+    // Adiciona os eventos aos botões
+    document.querySelectorAll(".enter-box-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const boxId = e.target.dataset.id;
+        if (!currentUser) {
+          alert("Você precisa fazer login para acessar esta caixa!");
+          return;
+        }
+        window.location.href = `pages/white-and-bright.html?boxId=${boxId}`;
+      });
+    });
+  }
+
+  // Sair do usuário atual
+  logoutBtn.addEventListener("click", () => {
+    if (currentUser) {
+      localStorage.removeItem("currentUser");
+      currentUser = null;
+      alert("Você saiu com sucesso.");
       updateUserInterface();
-    } else {
-      alert(data.message);
     }
   });
 
-  // Popular caixas e atualizar interface ao carregar a página
-  populateBoxes();
+  // Inicializa a interface
   updateUserInterface();
 });
-
-

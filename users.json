@@ -1,9 +1,7 @@
 [
-    {
-      "username": "Joao",
-      "password": "1234",
-      "saldo": 100,
-      "itens": ["Item1", "Item2"]
-    }
-  ]
-  
+  {
+    "username": "meuUsuario",
+    "password": "minhaSenha",
+    "saldo": 0
+  }
+]

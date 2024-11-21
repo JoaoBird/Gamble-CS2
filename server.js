@@ -1,102 +1,101 @@
-const express = require('express');
+/*const express = require("express");
+const bodyParser = require("body-parser");
 const fs = require("fs");
+const cors = require("cors");
+const path = require("path");
+
 const app = express();
 const PORT = 3000;
 
-// Middleware para processar JSON
-app.use(express.json());
+// Middlewares
+app.use(cors());
+app.use(bodyParser.json());
 
-// Servir os arquivos estáticos da pasta 'public'
-app.use(express.static("public"));
+// Servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, "public")));
 
-// Caminho do arquivo de usuários
-const usersFile = "users.json";
+// Rota para a página inicial
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "GambleCS2.html"));
+});
 
-// Função auxiliar para ler e salvar usuários
-const readUsers = () => {
-  if (!fs.existsSync(usersFile)) return [];
-  const data = fs.readFileSync(usersFile, "utf8");
-  return JSON.parse(data || "[]");
-};
+// Caminho do arquivo JSON onde os usuários serão armazenados
+const usersFilePath = "./users.json";
 
-const saveUsers = (users) => {
-  fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-};
+// Função para carregar usuários do arquivo JSON
+function loadUsers() {
+  if (!fs.existsSync(usersFilePath)) {
+    // Cria um arquivo vazio se não existir
+    fs.writeFileSync(usersFilePath, JSON.stringify([]));
+  }
+  try {
+    const data = fs.readFileSync(usersFilePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Erro ao carregar usuários:", error);
+    return [];
+  }
+}
 
-// Rota de login
+// Função para salvar usuários no arquivo JSON
+function saveUsers(users) {
+  try {
+    fs.writeFileSync(usersFilePath, JSON.stringify(users, null, 2));
+  } catch (error) {
+    console.error("Erro ao salvar usuários:", error);
+  }
+}
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
-  const users = readUsers();
+  if (!username || !password) {
+    return res.status(400).json({ message: "Usuário e senha são obrigatórios." });
+  }
+
+  const users = loadUsers();
+
   const user = users.find((u) => u.username === username && u.password === password);
 
-  if (user) {
-    res.json({ success: true, message: "Login bem-sucedido", user });
-  } else {
-    res.json({ success: false, message: "Usuário ou senha inválidos" });
+  if (!user) {
+    return res.status(401).json({ message: "Usuário ou senha inválidos." });
   }
+
+  res.status(200).json({
+    message: "Login realizado com sucesso!",
+    user: { username: user.username, saldo: user.saldo },
+  });
 });
 
-// Rota de registro
+
+// Rota para registrar usuários
 app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
-  const users = readUsers();
-  if (users.some((u) => u.username === username)) {
-    return res.status(400).json({ success: false, message: "Usuário já existe" });
+  if (!username || !password) {
+    return res.status(400).json({ message: "Usuário e senha são obrigatórios." });
   }
 
-  const newUser = { username, password, saldo: 0, itens: [] };
+  const users = loadUsers();
+
+  const existingUser = users.find((user) => user.username === username);
+  if (existingUser) {
+    return res.status(400).json({ message: "Usuário já registrado." });
+  }
+
+  const newUser = { username, password, saldo: 0 };
   users.push(newUser);
   saveUsers(users);
 
-  res.json({ success: true, message: "Usuário registrado com sucesso", user: newUser });
+  res.status(201).json({ message: "Usuário registrado com sucesso!", user: newUser });
 });
 
-// Rota para adicionar saldo
-app.post("/addSaldo", (req, res) => {
-  const { username, amount } = req.body;
-
-  const users = readUsers();
-  const user = users.find((u) => u.username === username);
-
-  if (!user) return res.status(404).json({ success: false, message: "Usuário não encontrado" });
-
-  user.saldo += amount;
-  saveUsers(users);
-
-  res.json({ success: true, saldo: user.saldo });
-});
-
-// Rota para listar itens do usuário
-app.get("/itens/:username", (req, res) => {
-  const { username } = req.params;
-
-  const users = readUsers();
-  const user = users.find((u) => u.username === username);
-
-  if (!user) return res.status(404).json({ success: false, message: "Usuário não encontrado" });
-
-  res.json({ success: true, itens: user.itens });
-});
-
-// Rota para adicionar um item ao inventário
-app.post("/addItem", (req, res) => {
-  const { username, item } = req.body;
-
-  const users = readUsers();
-  const user = users.find((u) => u.username === username);
-
-  if (!user) return res.status(404).json({ success: false, message: "Usuário não encontrado" });
-
-  user.itens.push(item);
-  saveUsers(users);
-
-  res.json({ success: true, itens: user.itens });
+// Rota para listar todos os usuários (apenas para teste, pode ser removida em produção)
+app.get("/users", (req, res) => {
+  const users = loadUsers();
+  res.json(users);
 });
 
 // Iniciar o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
-
+});*/
