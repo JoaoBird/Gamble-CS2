@@ -8,42 +8,43 @@
 </head>
 <body data-box-id="white-and-bright">
   <header>
-    <div class="navbar">
-      <h1>CS2 GAMBLE</h1>
-      <a href="../GambleCS2.html" class="back-button">Voltar</a>
-    </div>
-    <h1>Saldo: <span id="saldo-atual">R$0,00</span></h1>
+    <a href="../GambleCS2.html" class="back-button">Voltar</a>
+    <h1 id="box-title">White and Bright</h1>
+    <span id="saldo-atual">R$0.00</span>
   </header>
-
+  
   <main>
-    <body data-box-id="white-and-bright">
-      <h2>Itens da Caixa</h2>
-      <div class="grid-container item-list"></div>  
-
-      <div class="open-options">
-        <button id="open-box-btn">Abrir Caixa</button>
-        <div class="button-group">
-          <button data-count="1">1x</button>
-          <button data-count="2">2x</button>
-          <button data-count="3">3x</button>
-          <button data-count="5">5x</button>
-          <button data-count="10">10x</button>
-        </div>
-      </div>
-      
-
-    <div class="result-container">
-      <h3>Resultado:</h3>
-      <div class="roulette-animation"></div>
-      <div class="winnings"></div>
+    <div id="box-logo">
+      <img src="../pages/img-pag/box1.png" alt="Box Logo" />
     </div>
-  </body>
+    
+    <div id="roulette-container" style="display: none;">
+      <div class="roulette-item">
+        <img id="roulette-item-img" src="" alt="Item">
+        <p id="roulette-item-text">Gire para ganhar!</p>
+      </div>
+    </div>
+
+    <div id="skins-container" class="grid-container">
+      <!-- Skins serão carregadas dinamicamente -->
+    </div>
+  
+    <div class="open-options">
+      <span id="open-text">Abrir Caixa</span>
+      <button data-count="1">1x</button>
+      <button data-count="2">2x</button>
+      <button data-count="3">3x</button>
+      <button data-count="5">5x</button>
+      <button data-count="10">10x</button>
+    </div>
+  
+
   </main>
 
   <footer>
     <p>&copy; 2024 CS2 GAMBLE</p>
   </footer>
 
-  <script src="../boxPage.js"></script>
+  <script src="../boxPage.js" defer></script>
 </body>
 </html>

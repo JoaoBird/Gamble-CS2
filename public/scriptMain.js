@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = users.find((u) => u.username === username && u.password === password);
       if (user) {
         currentUser = user;
-        localStorage.setItem("currentUser", JSON.stringify(user));
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
         alert(`Bem-vindo, ${user.username}!`);
         loginModal.style.display = "none";
         updateUserInterface();
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (users.some((u) => u.username === username)) {
         alert("Usuário já cadastrado.");
       } else {
-        const newUser = { username, password, saldo: 0 };
+        const newUser = { username, password, saldo: 0 }; // Inicia com saldo 0
         users.push(newUser);
         localStorage.setItem("users", JSON.stringify(users));
         alert("Usuário cadastrado com sucesso!");
@@ -69,6 +69,119 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  function openBoxes(count) {
+    const boxPrice = 5.45; // Preço fixo por caixa (ajustar conforme necessário)
+    const totalCost = boxPrice * count;
+  
+    if (currentUser.saldo < totalCost) {
+      alert("Saldo insuficiente!");
+      return;
+    }
+  
+    // Deduz o saldo do usuário
+    currentUser.saldo -= totalCost;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    updateSaldoDisplay();
+  
+    // Gera os resultados
+    const results = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * items[boxId].length);
+      results.push(items[boxId][randomIndex]);
+    }
+  
+
+  }
+function renderRoulette(results) {
+  const rouletteContainer = document.getElementById("roulette-container");
+
+  
+  rouletteContainer.innerHTML = ""; // Limpa roletas existentes
+  rouletteContainer.classList.add("show"); // Mostra a roleta adicionando a classe
+
+  results.forEach((item, index) => {
+    const rouletteElement = document.createElement("div");
+    rouletteElement.classList.add("roulette-item");
+
+    rouletteElement.innerHTML = `
+      <img src="./img-itens/placeholder.png" alt="Roleta em andamento" id="roulette-item-img">
+      <p id="roulette-item-text">Girando...</p>
+    `;
+
+    rouletteContainer.appendChild(rouletteElement);
+
+    // Simula rotação e finaliza no item correto
+    animateRoulette(index, item);
+  });
+}
+
+function animateRoulette(index, winningItem) {
+  const rouletteImg = document.getElementById("roulette-item-img");
+  const rouletteText = document.getElementById("roulette-item-text");
+
+  if (!rouletteImg || !rouletteText) {
+    console.error("Erro: Elementos da roleta não encontrados!");
+    return;
+  }
+
+  let interval = setInterval(() => {
+    const randomIndex = Math.floor(Math.random() * items[boxId].length);
+    const randomItem = items[boxId][randomIndex];
+    rouletteImg.src = randomItem.image;
+    rouletteText.textContent = randomItem.name;
+  }, 100);
+
+  // Finaliza a roleta no item correto após 3 segundos
+  setTimeout(() => {
+    clearInterval(interval);
+    rouletteImg.src = winningItem.image;
+    rouletteText.textContent = `${winningItem.name} - R$${winningItem.price.toFixed(2)}`;
+
+    // Adiciona botões para vender ou abrir novamente
+    const rouletteContainer = document.getElementById("roulette-container");
+    rouletteContainer.innerHTML += `
+      <button class="sell-btn">Vender por R$${winningItem.price.toFixed(2)}</button>
+      <button class="open-again-btn">Abrir Novamente</button>
+    `;
+
+    document.querySelector(".sell-btn").addEventListener("click", () => {
+      currentUser.saldo += winningItem.price;
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      alert("Item vendido!");
+      location.reload();
+    });
+
+    document.querySelector(".open-again-btn").addEventListener("click", () => {
+      location.reload();
+    });
+  }, 3000);
+}
+
+
+
+  // Função para exibir o saldo atualizado
+  function updateSaldoDisplay() {
+    document.getElementById("saldo-atual").textContent = `R$${currentUser.saldo.toFixed(2)}`;
+  }
+  
+  function updateSaldo(newSaldo) {
+    if (currentUser) {
+      currentUser.saldo = newSaldo;
+  
+      // Atualiza o saldo no `localStorage`
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const userIndex = users.findIndex((u) => u.username === currentUser.username);
+      if (userIndex !== -1) {
+        users[userIndex].saldo = newSaldo;
+        localStorage.setItem("users", JSON.stringify(users)); // Salva a lista atualizada
+      }
+  
+      localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o usuário atual
+      updateUserInterface(); // Atualiza a interface com o novo saldo
+    }
+  }
+  
 
   // Fecha o modal
   closeModalBtn.addEventListener("click", () => {
@@ -143,10 +256,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".enter-box-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const boxId = e.target.dataset.id;
+     
         if (!currentUser) {
           alert("Você precisa fazer login para acessar esta caixa!");
           return;
         }
+
         window.location.href = `pages/white-and-bright.html?boxId=${boxId}`;
       });
     });
@@ -155,6 +270,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // Sair do usuário atual
   logoutBtn.addEventListener("click", () => {
     if (currentUser) {
+      // Recupera os usuários armazenados
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+  
+      // Atualiza o saldo do usuário atual na lista
+      const userIndex = users.findIndex((u) => u.username === currentUser.username);
+      if (userIndex !== -1) {
+        users[userIndex].saldo = currentUser.saldo;
+        localStorage.setItem("users", JSON.stringify(users)); // Salva a lista atualizada
+      }
+  
+      // Limpa o usuário atual e a interface
       localStorage.removeItem("currentUser");
       currentUser = null;
       alert("Você saiu com sucesso.");
