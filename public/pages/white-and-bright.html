@@ -5,40 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>White and Bright</title>
   <link rel="stylesheet" href="../styleMain.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body data-box-id="white-and-bright">
-  <header>
-    <a href="../GambleCS2.html" class="back-button">Voltar</a>
-    <h1 id="box-title">White and Bright</h1>
-    <span id="saldo-atual">R$0.00</span>
+<body>
+  <header class="site-header">
+    <div class="logo-container">
+      <a href="/public/GambleCS2.html">
+        <img src="/public/pages/img-pag/CS2G-icon.png" alt="CS2 Gamble Logo" />
+      </a>
+      <h1>CS2 GAMBLE</h1>
+    </div>
+    <div class="user-info">
+      <img id="profile-pic" src="/public/pages/img-pag/default-avatar.png" alt="Avatar do Usuário" style="display: none;" />
+      <span id="user-name">Guest</span>
+      <span id="user-saldo">Saldo: R$0</span>
+    </div>
   </header>
   
   <main>
+    <h1 id="box-title">White and Bright</h1>
     <div id="box-logo">
       <img src="../pages/img-pag/box1.png" alt="Box Logo" />
     </div>
     
-    <div id="roulette-container" style="display: none;">
-      <div class="roulette-item">
-        <img id="roulette-item-img" src="" alt="Item">
-        <p id="roulette-item-text">Gire para ganhar!</p>
-      </div>
-    </div>
+    <!-- Contêiner para roleta -->
+    <div id="roulette-container"></div>
 
-    <div id="skins-container" class="grid-container">
-      <!-- Skins serão carregadas dinamicamente -->
-    </div>
-  
+    <!-- Opções de abertura de caixas -->
     <div class="open-options">
-      <span id="open-text">Abrir Caixa</span>
+      <span id="open-text">Escolher Quantidade</span>
       <button data-count="1">1x</button>
       <button data-count="2">2x</button>
       <button data-count="3">3x</button>
       <button data-count="5">5x</button>
       <button data-count="10">10x</button>
+      <div id="open-box-container">
+        <button id="open-box-btn" class="open-box-btn">Abrir Caixa - R$5.45</button>
+      </div>
     </div>
-  
 
+    <!-- Contêiner de itens -->
+    <div id="item-list-container" class="grid-container"></div>
   </main>
 
   <footer>

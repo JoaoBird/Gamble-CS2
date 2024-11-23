@@ -5,19 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil</title>
   <link rel="stylesheet" href="styleMain.css">
+  <link rel="stylesheet" href="userItens.css">
   <script src="/public/scriptProfile.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>Perfil</h1>
-    <a href="/public/GambleCS2.html">Voltar</a>
+  <header class="site-header">
+    <div class="logo-container">
+      <a href="/public/GambleCS2.html">
+        <img src="/public/pages/img-pag/CS2G-icon.png" alt="CS2 Gamble Logo" />
+      </a>
+      <h1>CS2 GAMBLE</h1>
+    </div>
+    <div class="user-info">
+      <img id="profile-pic" src="/public/pages/img-pag/default-avatar.png" alt="Avatar do Usuário" style="display: none;" />
+      <span id="user-name">Guest</span>
+      <span id="user-saldo">Saldo: R$0</span>
+      <button id="add-balance-btn" class="balance-btn">Adicionar Saldo</button>
+      <button id="logout-btn" class="logout-btn" style="display: none;">Sair</button>
+    </div>
   </header>
-
+  
   <main>
     <h2>Bem-vindo, <span id="profile-username"></span>!</h2>
     <h3>Itens ganhados:</h3>
-    <ul id="user-items"></ul>
-    <a href="/public/balance.html">Adicionar Saldo</a>
+    <div id="user-items-grid" class="items-grid"></div>
   </main>
 
   <footer>

@@ -1,57 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const itemListContainer = document.getElementById("item-list-container");
+  const rouletteContainer = document.getElementById("roulette-container");
+  const openOptionsContainer = document.querySelector(".open-options");
+  const userNameDisplay = document.getElementById("user-name");
+  const userSaldoDisplay = document.getElementById("user-saldo");
+  const profilePic = document.getElementById("profile-pic");
 
-  // Verifica se o usuário está logado
+  const urlParams = new URLSearchParams(window.location.search);
+  const boxId = urlParams.get("boxId");
+
+  // Validação de usuário e caixa
   if (!currentUser) {
     alert("Você precisa fazer login para acessar esta página!");
     window.location.href = "../GambleCS2.html";
     return;
   }
 
-  // Recupera o ID da caixa da URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const boxId = urlParams.get("boxId");
-
-  // Define os itens disponíveis por caixa
-  const items = {
-    "white-and-bright": [
-      { name: "Driver Gloves King Snake", price: 190.55, image: "./img-itens/King-Snake.png" },
-      { name: "Bayonet Damascus Steel", price: 266.35, image: "./img-itens/Bayonet-Damascus-Steel.png" },
-      { name: "Desert Eagle Printstream", price: 34.44, image: "./img-itens/Desert-Printstream.png" },
-    ],
-    "green-wood-dragon": [
-      { name: "Green Dragon", price: 50.0, image: "../img-itens/green-dragon.png" },
-      { name: "Wooden Shield", price: 15.0, image: "../img-itens/wooden-shield.png" },
-    ],
-    "mystery-box": [
-      { name: "Mystery Item 1", price: 50, image: "../img-itens/mystery1.png" },
-      { name: "Mystery Item 2", price: 100, image: "../img-itens/mystery2.png" },
-    ],
-  };
-
-  // Verifica se o boxId é válido
-  if (!boxId || !items[boxId]) {
+  if (!boxId) {
     alert("Caixa inválida!");
     window.location.href = "../GambleCS2.html";
     return;
   }
 
-  const saldoDisplay = document.getElementById("saldo-atual");
-  const itemListContainer = document.querySelector(".grid-container");
-  const rouletteContainer = document.getElementById("roulette-container");
+  const boxPrices = {
+    "white-and-bright": 5.45,
+    "green-wood-dragon": 0.10,
+    "mystery-box": 10.00,
+  };
 
-  // Atualiza o saldo exibido na interface
-  function updateSaldoDisplay() {
-    if (saldoDisplay && currentUser) {
-      saldoDisplay.textContent = `R$${currentUser.saldo.toFixed(2)}`;
-    }
+  const items = {
+    "white-and-bright": [
+      { name: "Driver Gloves King Snake", price: 190.55, image: "/public/pages/img-itens/King-Snake.png" },
+      { name: "Bayonet Damascus Steel", price: 266.35, image: "/public/pages/img-itens/Bayonet-Damascus-Steel.png" },
+      { name: "Desert Eagle Printstream", price: 34.44, image: "/public/pages/img-itens/Desert-Printstream.png" },
+    ],
+  };
+
+  if (!items[boxId]) {
+    alert("Caixa inválida!");
+    window.location.href = "../GambleCS2.html";
+    return;
   }
 
-  // Renderiza os itens da caixa
-  function renderItems() {
-    if (!itemListContainer || !items[boxId]) return;
+  let boxPrice = boxPrices[boxId];
+  let selectedMultiplier = 1;
 
-    itemListContainer.innerHTML = ""; // Limpa os itens anteriores
+  // Exibir nome, saldo e foto do usuário
+  if (currentUser) {
+    userNameDisplay.textContent = currentUser.username;
+    userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
+    profilePic.src = currentUser.photo || "/public/pages/img-pag/CS2G-user.png";
+    profilePic.style.display = "block";
+  }
+
+  // Atualizar exibição de saldo
+  function updateSaldoDisplay() {
+    userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
+  }
+
+  // Renderizar os itens disponíveis para a caixa
+  function renderItems() {
+    itemListContainer.innerHTML = "";
     items[boxId].forEach((item) => {
       const itemElement = document.createElement("div");
       itemElement.classList.add("grid-item");
@@ -64,115 +74,140 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Renderiza a roleta com os resultados
-  function renderRoulette(results) {
-    if (!rouletteContainer) {
-      console.error("Erro: Elemento da roleta não encontrado!");
-      return;
-    }
+  // Animação de troca de imagens nos quadrados
+  function animateSquares(results, callback) {
+    const totalDuration = 3000;
+    const intervalTime = 100;
+    const startTime = Date.now();
 
-    rouletteContainer.innerHTML = ""; // Limpa roletas existentes
-    rouletteContainer.style.display = "block"; // Torna a roleta visível
+    const randomizeSquare = (square, finalItem) => {
+      const interval = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * items[boxId].length);
+        const randomItem = items[boxId][randomIndex];
 
-    results.forEach((item, index) => {
-      const rouletteElement = document.createElement("div");
-      rouletteElement.classList.add("roulette-item");
+        square.innerHTML = `
+          <img src="${randomItem.image}" alt="${randomItem.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
+          <p>Carregando...</p>
+        `;
 
-      rouletteElement.innerHTML = `
-        <img src="./img-itens/placeholder.png" alt="Roleta em andamento" id="roulette-item-img-${index}">
-        <p id="roulette-item-text-${index}">Girando...</p>
-      `;
+        if (Date.now() - startTime > totalDuration) {
+          clearInterval(interval);
+          square.innerHTML = `
+            <img src="${finalItem.image}" alt="${finalItem.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
+            <h3>${finalItem.name}</h3>
+            <p>R$${finalItem.price.toFixed(2)}</p>
+            <button class="sell-btn">Vender</button>
+          `;
 
-      rouletteContainer.appendChild(rouletteElement);
+          square.querySelector(".sell-btn").addEventListener("click", () => {
+            currentUser.saldo += finalItem.price;
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            updateSaldoDisplay();
+            alert(`Você vendeu ${finalItem.name} por R$${finalItem.price.toFixed(2)}!`);
+            square.remove();
+          });
+        }
+      }, intervalTime);
+    };
 
-      // Simula rotação e finaliza no item correto
-      animateRoulette(index, item);
+    results.forEach((finalItem) => {
+      const square = document.createElement("div");
+      square.classList.add("grid-item");
+      rouletteContainer.appendChild(square);
+      randomizeSquare(square, finalItem);
     });
-  }
 
-  function animateRoulette(index, winningItem) {
-    const rouletteImg = document.getElementById(`roulette-item-img-${index}`);
-    const rouletteText = document.getElementById(`roulette-item-text-${index}`);
-
-    if (!rouletteImg || !rouletteText) {
-      console.error("Erro: Elementos da roleta não encontrados!");
-      return;
-    }
-
-    let interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * items[boxId].length);
-      const randomItem = items[boxId][randomIndex];
-      rouletteImg.src = randomItem.image;
-      rouletteText.textContent = randomItem.name;
-    }, 100);
-
-    // Finaliza a roleta no item correto após 3 segundos
     setTimeout(() => {
-      clearInterval(interval);
-      rouletteImg.src = winningItem.image;
-      rouletteText.textContent = `${winningItem.name} - R$${winningItem.price.toFixed(2)}`;
-
-      // Adiciona botões para vender ou abrir novamente
-      rouletteContainer.innerHTML += `
-        <button class="sell-btn">Vender por R$${winningItem.price.toFixed(2)}</button>
-        <button class="open-again-btn">Abrir Novamente</button>
-      `;
-
-      document.querySelector(".sell-btn").addEventListener("click", () => {
-        currentUser.saldo += winningItem.price;
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-        alert("Item vendido!");
-        location.reload();
+      // Salva os itens no perfil do usuário após a animação
+      results.forEach((item) => {
+        currentUser.items = currentUser.items || [];
+        currentUser.items.push(item);
       });
 
-      document.querySelector(".open-again-btn").addEventListener("click", () => {
-        location.reload();
-      });
-    }, 3000);
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      callback(results);
+    }, totalDuration);
   }
 
-  // Abre caixas e exibe os resultados
-  function openBoxes(count) {
-    const boxPrice = 5.45; // Preço fixo por caixa
-    const totalCost = boxPrice * count;
+  // Adicionar botão "Vender Tudo"
+  function addSellAllButton(results) {
+    let sellAllButton = document.getElementById("sell-all-btn");
+    if (!sellAllButton) {
+      sellAllButton = document.createElement("button");
+      sellAllButton.id = "sell-all-btn";
+      sellAllButton.textContent = "Vender Tudo";
+      sellAllButton.style.backgroundColor = "#d9534f";
+      sellAllButton.style.color = "#fff";
+      sellAllButton.style.padding = "10px 20px";
+      sellAllButton.style.border = "none";
+      sellAllButton.style.borderRadius = "5px";
+      sellAllButton.style.cursor = "pointer";
+      sellAllButton.style.transition = "background-color 0.3s";
+
+      sellAllButton.addEventListener("click", () => {
+        const totalValue = results.reduce((sum, item) => sum + item.price, 0);
+        currentUser.saldo += totalValue;
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        updateSaldoDisplay();
+        alert(`Você vendeu todos os itens por R$${totalValue.toFixed(2)}!`);
+        rouletteContainer.innerHTML = ""; // Limpa os itens
+        sellAllButton.remove();
+      });
+
+      // Adiciona o botão ao lado do botão "Abrir Caixa"
+      const openBoxButton = document.getElementById("open-box-btn");
+      openBoxButton.parentNode.insertBefore(sellAllButton, openBoxButton.nextSibling);
+    }
+  }
+
+  // Abrir caixas
+  function openBoxes() {
+    const totalCost = boxPrice * selectedMultiplier;
 
     if (currentUser.saldo < totalCost) {
-      alert("Saldo insuficiente para abrir essas caixas!");
+      alert("Saldo insuficiente!");
       return;
     }
 
-    // Deduz o saldo
     currentUser.saldo -= totalCost;
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
     updateSaldoDisplay();
 
-    // Gera os resultados
     const results = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < selectedMultiplier; i++) {
       const randomIndex = Math.floor(Math.random() * items[boxId].length);
       results.push(items[boxId][randomIndex]);
     }
 
-    renderRoulette(results); // Exibe a roleta
+    animateSquares(results, addSellAllButton);
   }
 
-  // Configura os botões de abrir caixas
-  const openOptionsContainer = document.querySelector(".open-options");
-  openOptionsContainer.innerHTML = `
-    <span style="font-size: 18px; font-weight: bold; margin-right: 10px;">Abrir Caixa</span>
-    <button data-count="1">1x</button>
-    <button data-count="2">2x</button>
-    <button data-count="3">3x</button>
-    <button data-count="5">5x</button>
-    <button data-count="10">10x</button>
-  `;
+  // Renderizar botões de opções
+  if (openOptionsContainer) {
+    openOptionsContainer.innerHTML = `
+      <div style="text-align: center;">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button data-count="1" class="quantity-btn">1x</button>
+          <button data-count="2" class="quantity-btn">2x</button>
+          <button data-count="3" class="quantity-btn">3x</button>
+          <button data-count="5" class="quantity-btn">5x</button>
+          <button data-count="10" class="quantity-btn">10x</button>
+        </div>
+        <button id="open-box-btn">Abrir Caixa - R$${boxPrice.toFixed(2)}</button>
+      </div>
+    `;
 
-  document.querySelectorAll(".open-options button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const count = parseInt(btn.getAttribute("data-count"));
-      openBoxes(count);
+    document.querySelectorAll(".quantity-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        document.querySelectorAll(".quantity-btn").forEach((b) => b.classList.remove("selected"));
+        e.target.classList.add("selected");
+        selectedMultiplier = parseInt(e.target.getAttribute("data-count"));
+        document.getElementById("open-box-btn").textContent = `Abrir Caixa - R$${(boxPrice * selectedMultiplier).toFixed(2)}`;
+      });
     });
-  });
+
+    document.getElementById("open-box-btn").addEventListener("click", openBoxes);
+  }
 
   updateSaldoDisplay();
   renderItems();

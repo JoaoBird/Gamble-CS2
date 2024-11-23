@@ -4,37 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CS2 Gamble</title>
+  <script src="scriptMain.js" defer></script>
   <link rel="stylesheet" href="styleMain.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>CS2 GAMBLE</h1>
-    <div id="user-info">
-      <img id="profile-pic" src="" alt="Foto de Perfil" style="display: none; border-radius: 50%; width: 50px; height: 50px;">
-
+  <header class="site-header">
+    <div class="logo-container">
+      <a href="/public/GambleCS2.html">
+        <img src="/public/pages/img-pag/CS2G-icon.png" alt="CS2 Gamble Logo" />
+      </a>
+      <h1>CS2 GAMBLE</h1>
+    </div>
+    <div class="user-info">
+      <img id="profile-pic" src="/public/pages/img-pag/default-avatar.png" alt="Avatar do Usuário" style="display: none;" />
       <span id="user-name">Guest</span>
-      <span id="user-saldo">Saldo: R$0.00</span>
+      <span id="user-saldo">Saldo: R$0</span>
+      <button id="open-login-modal" class="login-btn">Entrar/Cadastrar</button>
+      <button id="logout-btn" class="logout-btn" style="display: none;">Sair</button>
     </div>
-    <button id="login-register-btn">Entrar/Cadastrar</button>
-    <button id="add-saldo-btn" style="display: none;">Adicionar Saldo</button>
-    <button id="logout-btn" style="display: none;">Sair</button>
-    <div id="login-modal">
-      <div class="modal-content">
-        <span id="close-modal" style="cursor: pointer; font-size: 24px;">&times;</span>
-        <h2 id="modal-title">Entrar</h2>
-        <input id="usernameInput" type="text" placeholder="Usuário">
-        <input id="passwordInput" type="password" placeholder="Senha">
-        <button id="actionButton">Entrar</button>
-        <p id="toggleText">
-          Não tem conta? <span id="toggleLink" style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>
-        </p>
-      </div>
-    </div>
-    
-    
-    
-    
   </header>
+  
+  <!-- Modal de Login -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="close-modal">&times;</span>
+      <h2 id="modal-title">Entrar</h2>
+      <input type="text" id="usernameInput" placeholder="Usuário" />
+      <input type="password" id="passwordInput" placeholder="Senha" />
+      <button id="actionButton">Entrar</button>
+      <p id="toggleText">Não tem conta? <span style="cursor: pointer; color: #4CAF50;" id="toggleLink">Cadastre-se</span></p>
+    </div>
+  </div>
 
   <main>
     <div class="grid-container">
@@ -45,7 +46,5 @@
   <footer>
     <p>&copy; 2024 CS2 GAMBLE</p>
   </footer>
-
-  <script src="scriptMain.js" defer></script>
 </body>
 </html>
