@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil</title>
-  <link rel="stylesheet" href="styleMain.css">
-  <script src="/public/scriptProfile.js" defer></script>
+  <title>White and Bright</title>
+  <link rel="stylesheet" href="../styleMain.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="site-header">
@@ -16,33 +16,42 @@
       <h1>CS2 GAMBLE</h1>
     </div>
     <div class="user-info">
-      <img id="profile-pic" src="/public/pages/img-pag/default-avatar.png" alt="Avatar do Usuário" style="display: none;" />
+      <img id="profile-pic" src="/public/pages/img-pag/CS2G-user.png" alt="Avatar do Usuário" class="profile-pic" />
       <span id="user-name">Guest</span>
       <span id="user-saldo">Saldo: R$0</span>
-      <button id="add-balance-btn" class="balance-btn">Adicionar Saldo</button>
-      <button id="logout-btn" class="logout-btn" style="display: none;">Sair</button>
     </div>
   </header>
   
   <main>
-    <h2>Bem-vindo, <span id="profile-username"></span>!</h2>
-    <h3>Itens ganhados:</h3>
-    <div id="user-items-grid" class="items-grid"></div>
+    <h1 id="box-title"></h1>
+    <div id="box-logo">
+      <img id="box-image" src="" alt="Box Logo" />
+    </div>
+
+    <!-- Contêiner para roleta -->
+    <div id="roulette-container"></div>
+
+    <!-- Opções de abertura de caixas -->
+    <div class="open-options">
+      <span id="open-text">Escolher Quantidade</span>
+      <button data-count="1" class="quantity-btn">1x</button>
+      <button data-count="2" class="quantity-btn">2x</button>
+      <button data-count="3" class="quantity-btn">3x</button>
+      <button data-count="5" class="quantity-btn">5x</button>
+      <button data-count="10" class="quantity-btn">10x</button>
+      <div id="open-box-container">
+        <button id="open-box-btn" class="open-box-btn">Abrir Caixa - R$5.45</button>
+      </div>
+    </div>
+
+    <!-- Contêiner de itens -->
+    <div id="item-list-container" class="grid-container"></div>
   </main>
 
   <footer>
-    <p>&copy; 2024 CS2 Gamble</p>
+    <p>&copy; 2024 CS2 GAMBLE</p>
   </footer>
 
-  <!-- Modal de Adicionar Saldo -->
-  <div id="add-balance-modal" class="modal">
-    <div class="modal-content">
-      <span id="close-modal" class="close-button">&times;</span>
-      <h2>Adicionar Saldo</h2>
-      <label for="balance-input">Valor (mínimo: R$1):</label>
-      <input type="number" id="balance-input" min="1" placeholder="Digite o valor" />
-      <button id="confirm-add-balance" class="confirm-btn">Adicionar</button>
-    </div>
-  </div>
+  <script src="../boxPage.js" defer></script>
 </body>
 </html>
