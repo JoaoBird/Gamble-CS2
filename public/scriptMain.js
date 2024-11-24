@@ -68,45 +68,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Atualiza a interface
+  // Atualiza a interface do usuário
   function updateUserInterface() {
     if (currentUser) {
-      if (userNameDisplay) userNameDisplay.textContent = currentUser.username;
-      if (userSaldoDisplay)
-        userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
-      if (logoutBtn) logoutBtn.style.display = "block";
-      if (openLoginModalButton) openLoginModalButton.style.display = "none";
-      if (profilePic) {
-        profilePic.src = "/public/pages/img-pag/CS2G-user.png"; // Caminho da imagem do avatar
-        profilePic.style.display = "block";
-        // Adiciona redirecionamento ao clicar no avatar
-        profilePic.addEventListener("click", () => {
-          window.location.href = "./profile.html"; // Caminho da página de perfil
-        });
-      }
+      userNameDisplay.textContent = currentUser.username;
+      userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
+      logoutBtn.style.display = "block";
+      openLoginModalButton.style.display = "none";
+      profilePic.src = "/public/pages/img-pag/CS2G-user.png";
+      profilePic.style.display = "block";
+      profilePic.addEventListener("click", () => {
+        window.location.href = "./profile.html";
+      });
     } else {
-      if (userNameDisplay) userNameDisplay.textContent = "Guest";
-      if (userSaldoDisplay) userSaldoDisplay.textContent = "Saldo: R$0.00";
-      if (logoutBtn) logoutBtn.style.display = "none";
-      if (openLoginModalButton) openLoginModalButton.style.display = "block";
-      if (profilePic) profilePic.style.display = "none";
+      userNameDisplay.textContent = "Guest";
+      userSaldoDisplay.textContent = "Saldo: R$0.00";
+      logoutBtn.style.display = "none";
+      openLoginModalButton.style.display = "block";
+      profilePic.style.display = "none";
     }
-    if (gridContainer) populateBoxes();
+    populateBoxes();
   }
 
   // Popula as caixas no grid
   function populateBoxes() {
     const boxes = [
-      { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "pages/img-pag/box1.png" },
-      { name: "Green Wood Dragon", price: 0.10, id: "green-wood-dragon", image: "pages/img-pag/box2.png" },
-      { name: "Doppler Mining", price: 1.17, id: "doppler-mining", image: "pages/img-pag/box3.png" },
+      { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "/public/pages/img-pag/box1.png" },
+      { name: "Green Wood Dragon", price: 0.10, id: "green-wood-dragon", image: "/public/pages/img-pag/box2.png" },
+      { name: "Doppler Mining", price: 1.17, id: "doppler-mining", image: "/public/pages/img-pag/box3.png" },
     ];
   
     if (!gridContainer) return;
   
     gridContainer.innerHTML = "";
     boxes.forEach((box) => {
-
       const boxElement = document.createElement("div");
       boxElement.className = "grid-item";
       boxElement.innerHTML = `
@@ -116,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="enter-box-btn" 
                 data-id="${box.id}" 
                 data-name="${box.name}" 
-                data-image="/public/${box.image}">Entrar na Caixa</button>
+                data-image="${box.image}">Entrar na Caixa</button>
       `;
       gridContainer.appendChild(boxElement);
     });

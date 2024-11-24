@@ -34,5 +34,16 @@
   <footer>
     <p>&copy; 2024 CS2 Gamble</p>
   </footer>
+
+  <!-- Modal de adicionar saldo -->
+  <div id="add-balance-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal" class="close-button">&times;</span>
+      <h2>Adicionar Saldo</h2>
+      <label for="balance-input">Insira o valor a adicionar:</label>
+      <input type="number" id="balance-input" placeholder="Valor mínimo: R$1" min="1" step="0.01" />
+      <button id="confirm-add-balance" class="confirm-btn">Adicionar</button>
+    </div>
+  </div>
 </body>
 </html>
