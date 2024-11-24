@@ -6,30 +6,29 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  const userItemsKey = `user_items_${currentUser.username}`;
+  let storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
+
   const userNameDisplay = document.getElementById("user-name");
   const userSaldoDisplay = document.getElementById("user-saldo");
   const profilePic = document.getElementById("profile-pic");
   const profileUsername = document.getElementById("profile-username");
   const userItemsGrid = document.getElementById("user-items-grid");
-  const addBalanceBtn = document.getElementById("add-balance-btn");
 
-  // Atualizar informações do usuário
   userNameDisplay.textContent = currentUser.username;
   userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
-  profilePic.src = currentUser.photo || "./pages/img-pag/CS2G-user.png"; // Caminho corrigido para a foto do usuário
+  profilePic.src = currentUser.photo || "./pages/img-pag/CS2G-user.png";
   profilePic.style.display = "block";
   profileUsername.textContent = currentUser.username;
 
-  // Exibir itens do usuário
-  const userItems = currentUser.items || []; // Garante que o array exista
-  function renderUserItems() {
-    userItemsGrid.innerHTML = ""; // Limpa o grid
-    if (userItems.length === 0) {
+  const renderUserItems = () => {
+    userItemsGrid.innerHTML = "";
+    if (storedItems.length === 0) {
       userItemsGrid.innerHTML = "<p>Você ainda não ganhou itens.</p>";
       return;
     }
-  
-    userItems.forEach((item, index) => {
+
+    storedItems.forEach((item, index) => {
       const itemElement = document.createElement("div");
       itemElement.classList.add("grid-item");
       itemElement.innerHTML = `
@@ -38,40 +37,75 @@ document.addEventListener("DOMContentLoaded", () => {
         <p>Valor: R$${item.price.toFixed(2)}</p>
         <button class="sell-btn" data-index="${index}">Vender</button>
       `;
-  
-      // Evento para vender o item
+
       itemElement.querySelector(".sell-btn").addEventListener("click", () => {
-        currentUser.saldo += item.price; // Atualiza o saldo
-        userItems.splice(index, 1); // Remove o item do array
-        localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o localStorage
+        currentUser.saldo += item.price;
+        storedItems.splice(index, 1);
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        localStorage.setItem(userItemsKey, JSON.stringify(storedItems));
         updateSaldoDisplay();
-        renderUserItems(); // Atualiza o grid
+        renderUserItems();
         alert(`Você vendeu ${item.name} por R$${item.price.toFixed(2)}!`);
       });
-  
+
       userItemsGrid.appendChild(itemElement);
     });
-  }
-  
 
-  // Atualizar saldo do usuário
-  function updateSaldoDisplay() {
+    addSellAllButton();
+  };
+
+  const updateSaldoDisplay = () => {
     userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
-  }
+  };
 
-  // Botão de adicionar saldo
-  addBalanceBtn.addEventListener("click", () => {
-    const amount = parseFloat(prompt("Digite o valor a ser adicionado:", "0.00"));
-    if (!isNaN(amount) && amount > 0) {
-      currentUser.saldo += amount;
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      updateSaldoDisplay();
-      alert(`Saldo atualizado! Seu saldo agora é R$${currentUser.saldo.toFixed(2)}.`);
-    } else {
-      alert("Valor inválido!");
+  const addSellAllButton = () => {
+    let sellAllButton = document.getElementById("profile-sell-all-btn");
+
+    if (storedItems.length === 0) {
+        if (sellAllButton) {
+            sellAllButton.remove(); // Remove o botão se não houver itens
+        }
+        return;
     }
-  });
 
-  // Renderizar os itens do usuário ao carregar a página
+    const totalValue = storedItems.reduce((sum, item) => sum + item.price, 0);
+
+    if (!sellAllButton) {
+        sellAllButton = document.createElement("button");
+        sellAllButton.id = "profile-sell-all-btn";
+        sellAllButton.style.backgroundColor = "#28a745"; // Cor verde
+        sellAllButton.style.color = "#fff";
+        sellAllButton.style.padding = "10px 20px";
+        sellAllButton.style.border = "none";
+        sellAllButton.style.borderRadius = "5px";
+        sellAllButton.style.cursor = "pointer";
+        sellAllButton.style.marginBottom = "10px";
+        sellAllButton.style.transition = "background-color 0.3s";
+        sellAllButton.textContent = `Vender Tudo - R$${totalValue.toFixed(2)}`;
+
+        sellAllButton.addEventListener("click", () => {
+            if (storedItems.length > 0) {
+                currentUser.saldo += totalValue; // Atualiza o saldo
+                localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o saldo no localStorage
+                alert(`Você vendeu todos os itens por R$${totalValue.toFixed(2)}!`);
+                storedItems.length = 0; // Limpa o array de itens
+                localStorage.setItem(userItemsKey, JSON.stringify(storedItems)); // Atualiza os itens no localStorage
+                renderUserItems(); // Atualiza o grid
+                
+                // Desativa o botão e muda a aparência
+                sellAllButton.disabled = true;
+                sellAllButton.style.backgroundColor = "#6c757d"; // Cor cinza
+                sellAllButton.style.cursor = "not-allowed";
+                sellAllButton.textContent = "Todos os itens vendidos";
+            }
+        });
+
+        userItemsGrid.parentNode.insertBefore(sellAllButton, userItemsGrid);
+    }
+
+    sellAllButton.textContent = `Vender Tudo - R$${totalValue.toFixed(2)}`;
+};
+
+
   renderUserItems();
 });
