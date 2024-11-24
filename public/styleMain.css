@@ -288,6 +288,12 @@ button:hover {
   margin: 0 auto;
 }
 
+.user-items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 /* itens do grid */
 .grid-item {
   display: flex;
@@ -586,3 +592,27 @@ main {
     box-shadow: 0 0 20px white;
   }
 }
+
+#profile-button-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#profile-link {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#profile-link:hover {
+  background-color: #218838;
+}
+
+
+
+
+

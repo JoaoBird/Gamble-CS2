@@ -1,10 +1,16 @@
+let selectedMultiplier = 1;
+
 document.addEventListener("DOMContentLoaded", () => {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  // Verificar se o usuário está logado
   if (!currentUser) {
     alert("Você precisa fazer login para acessar esta página!");
     window.location.href = "../GambleCS2.html";
     return;
   }
+
+  const userItemsKey = `user_items_${currentUser.username}`;
   const urlParams = new URLSearchParams(window.location.search);
   const boxName = urlParams.get("boxName");
   const boxImage = urlParams.get("boxImage");
@@ -15,28 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const userNameDisplay = document.getElementById("user-name");
   const userSaldoDisplay = document.getElementById("user-saldo");
   const profilePic = document.getElementById("profile-pic");
+
+  // Atualizar interface inicial
   userNameDisplay.textContent = currentUser.username;
   userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
   profilePic.style.display = "block";
 
   // Atualizar título e imagem da caixa
-
-
   document.title = boxName || "Caixa Desconhecida";
-
   const boxTitleElement = document.getElementById("box-title");
   const boxImageElement = document.getElementById("box-image");
-  
 
   if (boxTitleElement && boxImageElement) {
     boxTitleElement.textContent = boxName || "Caixa Desconhecida";
     boxImageElement.src = boxImage || "/public/pages/img-pag/default-box.png";
-  }
-
-  if (!currentUser) {
-    alert("Você precisa fazer login para acessar esta página!");
-    window.location.href = "../GambleCS2.html";
-    return;
   }
 
   if (!boxId) {
@@ -50,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "green-wood-dragon": 0.10,
     "mystery-box": 10.00,
   };
+
+  
 
   const items = {
     "white-and-bright": [
@@ -66,205 +66,76 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
   };
 
-  function calculateItemChances(items) {
-    const totalWeight = items.reduce((sum, item) => sum + 1 / item.price, 0);
-    return items.map((item) => ({
-      ...item,
-      chance: (1 / item.price) / totalWeight * 100,
-    }));
-  }
+  // Atualizar informações do usuário na interface
+  userNameDisplay.textContent = currentUser.username;
+  userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
+  profilePic.style.display = "block";
 
-  function chooseItemBasedOnProbability(items) {
-    const chances = items.map((item) => item.chance);
-    const cumulativeChances = [];
-    let sum = 0;
-    chances.forEach((chance) => {
-      sum += chance;
-      cumulativeChances.push(sum);
+  // Adicionar evento de redirecionamento ao clicar no nome ou na foto do usuário
+  [userNameDisplay, profilePic].forEach((element) => {
+    element.addEventListener("click", () => {
+      window.location.href = "../profile.html";
+    });
+    element.style.cursor = "pointer";
+  });
+
+
+  // Função para exibir o botão "Ir para o Perfil"
+  function displayProfileButton() {
+    // Verifica se o botão já foi criado
+    if (document.getElementById("profile-link")) {
+        return;
+    }
+
+    // Criação do contêiner para o botão
+    const profileButtonContainer = document.createElement("div");
+    profileButtonContainer.id = "profile-button-container";
+    profileButtonContainer.innerHTML = `
+      <button id="profile-link" style="
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;">
+        Ir para o Perfil
+      </button>
+    `;
+    profileButtonContainer.style.textAlign = "center";
+
+    // Localiza o botão "Abrir Caixa" e insere o botão de perfil logo abaixo
+    const openBoxButton = document.getElementById("open-box-btn");
+    if (openBoxButton) {
+        openBoxButton.parentNode.appendChild(profileButtonContainer);
+    }
+
+    // Adiciona evento de clique no botão
+    document.getElementById("profile-link").addEventListener("click", () => {
+        window.location.href = "../profile.html";
     });
 
-    const random = Math.random() * 100;
-    for (let i = 0; i < cumulativeChances.length; i++) {
-      if (random < cumulativeChances[i]) {
-        return items[i];
-      }
-    }
-    return items[items.length - 1];
-  }
-
-  function animateSquares(results, callback) {
-    const totalDuration = 4000;
-    const intervalTime = 100;
-    const startTime = Date.now();
-  
-    // Esconde os botões enquanto a animação ocorre
-    document.getElementById("open-box-btn").style.display = "none";
-    document.querySelectorAll(".quantity-btn").forEach((btn) => (btn.style.display = "none"));
-  
-    results.forEach((finalItem) => {
-      const square = document.createElement("div");
-      square.classList.add("grid-item");
-      rouletteContainer.appendChild(square);
-  
-      const interval = setInterval(() => {
-        const randomIndex = Math.floor(Math.random() * items[boxId].length);
-        const randomItem = items[boxId][randomIndex];
-  
-        square.innerHTML = `
-          <img src="${randomItem.image}" alt="${randomItem.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
-          <p>Carregando...</p>
-        `;
-  
-        if (Date.now() - startTime > totalDuration) {
-          clearInterval(interval);
-          const isRare = finalItem.chance < 5;
-          square.innerHTML = `
-            <img src="${finalItem.image}" alt="${finalItem.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;" class="${isRare ? 'rare-item' : ''}">
-            <h3>${finalItem.name}</h3>
-            <p>R$${finalItem.price.toFixed(2)}</p>
-            ${isRare ? `<p>Chance: ${finalItem.chance.toFixed(2)}%</p>` : ''}
-            <button class="sell-btn">Vender</button>
-          `;
-  
-          square.querySelector(".sell-btn").addEventListener("click", () => {
-            currentUser.saldo += finalItem.price;
-            localStorage.setItem("currentUser", JSON.stringify(currentUser));
-            updateSaldoDisplay();
-            alert(`Você vendeu ${finalItem.name} por R$${finalItem.price.toFixed(2)}!`);
-            square.remove();
-            results = results.filter((item) => item !== finalItem);
-          });
-        }
-      }, intervalTime);
+    // Adiciona evento de clique no botão
+    document.getElementById("profile-link").addEventListener("click", () => {
+        window.location.href = "../profile.html";
     });
-  
-    // Salva os itens no perfil após a animação
-    setTimeout(() => {
-      saveItemsToUserProfile(results);
-  
-      document.getElementById("open-box-btn").style.display = "inline-block";
-      document.querySelectorAll(".quantity-btn").forEach((btn) => (btn.style.display = "inline-block"));
-  
-      callback(results);
-    }, totalDuration);
-  }
-  
-  
-  
-  function addSellAllButton(results) {
-    let sellAllButton = document.getElementById("sell-all-btn");
-  
-    // Função para calcular o valor total dos itens disponíveis para venda
-    const calculateTotalValue = () => results.reduce((sum, item) => sum + item.price, 0);
-  
-    // Função para atualizar o texto do botão "Vender Tudo"
-    const updateSellAllButtonText = () => {
-      if (sellAllButton) {
-        const totalValue = calculateTotalValue();
-        sellAllButton.textContent = `Vender Tudo - R$${totalValue.toFixed(2)}`;
-        sellAllButton.disabled = totalValue === 0; // Desabilita o botão se não houver mais itens
-      }
-    };
-  
-    // Função para remover o botão "Vender Tudo" se não houver mais itens
-    const removeSellAllButtonIfNoItems = () => {
-      if (results.length === 0 && sellAllButton) {
-        sellAllButton.remove();
-        sellAllButton = null;
-      }
-    };
-  
-    // Cria o botão "Vender Tudo" se ele não existir
-    if (!sellAllButton) {
-      sellAllButton = document.createElement("button");
-      sellAllButton.id = "sell-all-btn";
-      sellAllButton.style.backgroundColor = "#d9534f";
-      sellAllButton.style.color = "#fff";
-      sellAllButton.style.padding = "10px 20px";
-      sellAllButton.style.border = "none";
-      sellAllButton.style.borderRadius = "5px";
-      sellAllButton.style.cursor = "pointer";
-      sellAllButton.style.marginTop = "10px";
-      sellAllButton.style.transition = "background-color 0.3s";
-  
-      const openBoxButton = document.getElementById("open-box-btn");
-      openBoxButton.parentNode.insertBefore(sellAllButton, openBoxButton.nextSibling);
-  
-      // Adiciona evento para vender todos os itens
-      sellAllButton.addEventListener("click", () => {
-        const totalValue = calculateTotalValue();
-        currentUser.saldo += totalValue; // Adiciona o valor total ao saldo
-        localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o saldo no localStorage
-        updateSaldoDisplay();
-        alert(`Você vendeu todos os itens por R$${totalValue.toFixed(2)}!`);
-        results.length = 0; // Limpa os resultados
-        rouletteContainer.innerHTML = ""; // Remove os itens da tela
-        removeSellAllButtonIfNoItems(); // Remove o botão
-      });
-    }
-  
-    // Atualiza o texto do botão inicialmente
-    updateSellAllButtonText();
-  
-    // Adiciona eventos de clique para vender individualmente os itens
-    results.forEach((item) => {
-      const itemElement = Array.from(rouletteContainer.children).find((element) =>
-        element.querySelector("h3")?.textContent === item.name
-      );
-  
-      if (itemElement) {
-        const sellButton = itemElement.querySelector(".sell-btn");
-  
-        if (sellButton) {
-          sellButton.addEventListener("click", () => {
-            // Remove o item do array de resultados
-            const index = results.findIndex((res) => res.name === item.name);
-            if (index > -1) {
-              results.splice(index, 1);
-            }
-            currentUser.saldo += item.price; // Adiciona o valor do item ao saldo
-            localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o saldo no localStorage
-            updateSaldoDisplay(); // Atualiza o saldo exibido
-            itemElement.remove(); // Remove o item da tela
-            updateSellAllButtonText(); // Atualiza o texto do botão "Vender Tudo"
-            removeSellAllButtonIfNoItems(); // Remove o botão se não houver mais itens
-          });
-        }
-      }
-    });
-  }
-  
-  
+}
 
-  function openBoxes() {
-    const totalCost = boxPrices[boxId] * selectedMultiplier;
 
-    if (currentUser.saldo < totalCost) {
-      alert("Saldo insuficiente!");
-      return;
-    }
-
-    currentUser.saldo -= totalCost;
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
-    updateSaldoDisplay();
-
-    const results = [];
-    for (let i = 0; i < selectedMultiplier; i++) {
-      const itemWithChances = calculateItemChances(items[boxId]);
-      results.push(chooseItemBasedOnProbability(itemWithChances));
-    }
-
-    animateSquares(results, addSellAllButton);
-  }
 
   function renderItems() {
+    // Limpa os itens existentes
     itemListContainer.innerHTML = "";
+  
+    // Calcula as chances dos itens
     const itemWithChances = calculateItemChances(items[boxId]);
+  
+    // Renderiza cada item
     itemWithChances.forEach((item) => {
       const itemElement = document.createElement("div");
       itemElement.classList.add("grid-item");
       itemElement.innerHTML = `
-        <img src="${item.image}" alt="${item.name}">
+        <img src="${item.image}" alt="${item.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
         <h3>${item.name}</h3>
         <p>R$${item.price.toFixed(2)}</p>
         <p>Chance: ${item.chance.toFixed(2)}%</p>
@@ -272,52 +143,289 @@ document.addEventListener("DOMContentLoaded", () => {
       itemListContainer.appendChild(itemElement);
     });
   }
+  
+  // Função chamada após o carregamento inicial
+  renderItems();
+  
+  function saveItemsToUserProfile(newItems) {
+    let storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
+    storedItems = [...storedItems, ...newItems];
+    localStorage.setItem(userItemsKey, JSON.stringify(storedItems));
+  }
+
+  function calculateItemChances(items) {
+    const totalWeight = items.reduce((sum, item) => sum + 1 / item.price, 0);
+    return items.map((item) => ({
+      ...item,
+      chance: ((1 / item.price) / totalWeight) * 100,
+    }));
+  }
+  
+  function chooseItemBasedOnProbability(items, lastSelectedItems) {
+    const itemWithChances = calculateItemChances(items);
+    const cumulativeChances = [];
+    let sum = 0;
+  
+    itemWithChances.forEach((item) => {
+      sum += item.chance;
+      cumulativeChances.push(sum);
+    });
+  
+    let selectedItem;
+    let attempts = 0;
+    do {
+      const random = Math.random() * 100; // Número aleatório entre 0 e 100
+      for (let i = 0; i < cumulativeChances.length; i++) {
+        if (random <= cumulativeChances[i]) {
+          selectedItem = itemWithChances[i];
+          break;
+        }
+      }
+      attempts++;
+      // Evitar repetições consecutivas
+    } while (lastSelectedItems.includes(selectedItem.name) && attempts < 5);
+  
+    return selectedItem || itemWithChances[itemWithChances.length - 1]; // Retorna o último como fallback
+  }
+  
+  function openBoxes() {
+    const totalCost = boxPrices[boxId] * selectedMultiplier;
+  
+    if (currentUser.saldo < totalCost) {
+      alert("Saldo insuficiente!");
+      return;
+    }
+  
+    currentUser.saldo -= totalCost; // Deduz saldo
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    updateSaldoDisplay();
+  
+    const lastSelectedItems = [];
+    const results = Array.from({ length: selectedMultiplier }, () => {
+      const item = chooseItemBasedOnProbability(items[boxId], lastSelectedItems);
+      lastSelectedItems.push(item.name);
+      return item;
+    });
+  
+    animateSquares(results); // Exibe os itens
+    saveItemsToUserProfile(results); // Salva no perfil
+  }
+  
+
+  function chooseItemBasedOnProbability(items, lastSelectedItems) {
+    const itemWithChances = calculateItemChances(items);
+    const cumulativeChances = [];
+    let sum = 0;
+  
+    itemWithChances.forEach((item) => {
+      sum += item.chance;
+      cumulativeChances.push(sum);
+    });
+  
+    let selectedItem;
+    let attempts = 0;
+    do {
+      const random = Math.random() * 100; // Número aleatório entre 0 e 100
+      for (let i = 0; i < cumulativeChances.length; i++) {
+        if (random <= cumulativeChances[i]) {
+          selectedItem = itemWithChances[i];
+          break;
+        }
+      }
+      attempts++;
+      // Evitar repetições consecutivas
+    } while (lastSelectedItems.includes(selectedItem.name) && attempts < 5);
+  
+    return selectedItem || itemWithChances[itemWithChances.length - 1]; // Retorna o último como fallback
+  }
+
+  function displayProfileButton() {
+    // Verifica se o botão já foi criado
+    if (document.getElementById("profile-link")) {
+      return;
+    }
+  
+    // Criação do contêiner para o botão
+    const profileButtonContainer = document.createElement("div");
+    profileButtonContainer.id = "profile-button-container";
+    profileButtonContainer.innerHTML = `
+      <button id="profile-link" style="
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        cursor: pointer;">
+        Ir para o Perfil
+      </button>
+    `;
+    profileButtonContainer.style.textAlign = "center";
+  
+    // Adiciona o botão logo abaixo da roleta
+    const parentContainer = document.getElementById("roulette-container");
+    if (parentContainer) {
+      parentContainer.parentNode.appendChild(profileButtonContainer);
+    }
+  
+    // Adiciona evento de clique no botão
+    const profileButton = document.getElementById("profile-link");
+    if (profileButton) {
+      profileButton.addEventListener("click", () => {
+        window.location.href = "../profile.html";
+      });
+    }
+  }
+  
+  function animateSquares(results) {
+    const totalDuration = 4000; // Duração total da animação
+    const intervalTime = 100; // Intervalo entre as mudanças
+    const startTime = Date.now();
+
+    if (results.length < 5) {
+      rouletteContainer.style.display = "flex";
+      rouletteContainer.style.justifyContent = "center";
+      rouletteContainer.style.gap = "10px";
+    } else {
+      rouletteContainer.style.display = "grid";
+
+    }
+
+    // Limpa os resultados anteriores na roleta
+    rouletteContainer.innerHTML = "";
+  
+    results.forEach((item, index) => {
+      const square = document.createElement("div");
+      square.classList.add("grid-item");
+
+
+
+  
+
+
+      rouletteContainer.appendChild(square);
+  
+      const interval = setInterval(() => {
+        const randomItem = items["white-and-bright"][Math.floor(Math.random() * items["white-and-bright"].length)];
+        square.innerHTML = `
+          <img src="${randomItem.image}" alt="${randomItem.name}" style="width: 100px;">
+          <p>Carregando...</p>
+        `;
+  
+        if (Date.now() - startTime > totalDuration) {
+          clearInterval(interval);
+          square.innerHTML = `
+            <img src="${item.image}" alt="${item.name}" style="width: 100px;">
+            <h3>${item.name}</h3>
+            <p>R$${item.price.toFixed(2)}</p>
+          `;
+        }
+            // Adicionar brilho se a chance do item for menor ou igual a 5%
+    if (item.chance <= 5) {
+      setTimeout(() => {
+        square.style.border = "2px solid gold";
+        square.style.boxShadow = "0 0 20px 5px rgba(255, 215, 0, 0.8)";
+        square.style.transition = "all 0.3s ease-in-out";
+      }, 4000); // Aplica o brilho logo após o término da rotação
+    }
+      }, intervalTime); // Incremento para diferenciar animações simultâneas
+    });
+  
+    // Exibe o botão "Ir para o Perfil" após a animação terminar
+    setTimeout(() => {
+      displayProfileButton();
+    }, totalDuration);
+  }
+  
+
+  
+  // Mostra o botão "Ir para o Perfil" após a roleta girar
+  function displayProfileButton() {
+    if (document.getElementById("profile-link")) return;
+
+    const profileButton = document.createElement("button");
+    profileButton.id = "profile-link";
+    profileButton.textContent = "Ir para o Perfil";
+    profileButton.style.cssText = `
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-left: 10px;
+      cursor: pointer;
+    `;
+
+    profileButton.addEventListener("click", () => {
+      window.location.href = "../profile.html";
+    });
+
+    const openBoxButton = document.getElementById("open-box-btn");
+    openBoxButton.parentNode.appendChild(profileButton);
+  }
+
+  function openBoxes() {
+    const totalCost = boxPrices["white-and-bright"] * selectedMultiplier;
+  
+    if (currentUser.saldo < totalCost) {
+      alert("Saldo insuficiente!");
+      return;
+    }
+  
+    // Deduz o saldo e atualiza o localStorage
+    currentUser.saldo -= totalCost;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    updateSaldoDisplay();
+    
+    // Gera os resultados com base no número de caixas abertas
+    const lastSelectedItems = [];
+    const results = Array.from({ length: selectedMultiplier }, () => {
+    const item = chooseItemBasedOnProbability(items[boxId], lastSelectedItems);
+    lastSelectedItems.push(item.name);
+    return item;
+  });
+  
+    // Anima e exibe os resultados
+    animateSquares(results);
+  
+    // Salva os itens no perfil do usuário
+    saveItemsToUserProfile(results);
+  }
 
   function updateSaldoDisplay() {
     userSaldoDisplay.textContent = `Saldo: R$${currentUser.saldo.toFixed(2)}`;
   }
 
-  let selectedMultiplier = 1;
-
   if (openOptionsContainer) {
     openOptionsContainer.innerHTML = `
-      <div style="text-align: center;">
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
           <button data-count="1" class="quantity-btn">1x</button>
           <button data-count="2" class="quantity-btn">2x</button>
           <button data-count="3" class="quantity-btn">3x</button>
           <button data-count="5" class="quantity-btn">5x</button>
           <button data-count="10" class="quantity-btn">10x</button>
         </div>
-        <button id="open-box-btn">Abrir Caixa - R$${boxPrices[boxId].toFixed(2)}</button>
+        <button id="open-box-btn">Abrir Caixa - R$${boxPrices["white-and-bright"].toFixed(2)}</button>
+        <p style="margin-top: 10px; color: #aaa; font-size: 14px;">Atenção: as skins só podem ser vendidas na página de Perfil do usuário.</p>
       </div>
     `;
+
 
     document.querySelectorAll(".quantity-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         document.querySelectorAll(".quantity-btn").forEach((b) => b.classList.remove("selected"));
         e.target.classList.add("selected");
         selectedMultiplier = parseInt(e.target.getAttribute("data-count"));
-        document.getElementById("open-box-btn").textContent = `Abrir Caixa - R$${(boxPrices[boxId] * selectedMultiplier).toFixed(2)}`;
+        document.getElementById(
+          "open-box-btn"
+        ).textContent = `Abrir Caixa - R$${(boxPrices["white-and-bright"] * selectedMultiplier).toFixed(2)}`;
       });
     });
+    
 
     document.getElementById("open-box-btn").addEventListener("click", openBoxes);
   }
 
   updateSaldoDisplay();
-  renderItems();
-
-  function saveItemsToUserProfile(items) {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser) return;
-  
-    const userItemsKey = `user_items_${currentUser.username}`;
-    const existingItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
-    const updatedItems = [...existingItems, ...items];
-    localStorage.setItem(userItemsKey, JSON.stringify(updatedItems));
-  }
-  
-  
-  
 });
