@@ -18,8 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeModalButton = document.getElementById("close-modal");
   const balanceInput = document.getElementById("balance-input");
   const confirmAddBalanceButton = document.getElementById("confirm-add-balance");
+  const availableValueDisplay = document.createElement("p"); // Exibição do valor total das skins disponíveis
+  availableValueDisplay.id = "available-value-display";
+  userItemsGrid.parentElement.appendChild(availableValueDisplay); // Adiciona o texto abaixo da grade
 
-  // Atualizar informações do usuário na interface
   const updateUserInterface = () => {
     if (userNameDisplay) {
       userNameDisplay.textContent = `Bem-vindo, ${currentUser.username}!`;
@@ -39,44 +41,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const renderSellAllButton = () => {
+  const updateAvailableValueDisplay = () => {
     const storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
-    const itemsToSell = storedItems.filter((item) => !item.sold);
+    const availableItems = storedItems.filter((item) => !item.sold);
+    const totalValue = availableItems.reduce((sum, item) => sum + item.price, 0);
+    availableValueDisplay.textContent = `Valor total das skins disponíveis para venda: R$${totalValue.toFixed(2)}`;
+  };
 
-    let sellAllButton = document.getElementById("sell-all-btn");
+  const sellItem = (item) => {
+    const storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
+    const itemIndex = storedItems.findIndex(
+      (storedItem) =>
+        storedItem.name === item.name &&
+        storedItem.image === item.image &&
+        !storedItem.sold
+    );
 
-    if (itemsToSell.length === 0) {
-      if (sellAllButton) {
-        sellAllButton.remove();
-      }
-      return;
-    }
+    if (itemIndex !== -1) {
+      storedItems[itemIndex].sold = true; // Marca como vendido
+      localStorage.setItem(userItemsKey, JSON.stringify(storedItems)); // Atualiza o localStorage
 
-    const totalValue = itemsToSell.reduce((sum, item) => sum + item.price, 0);
+      currentUser.saldo += item.price; // Adiciona o valor ao saldo
+      localStorage.setItem("currentUser", JSON.stringify(currentUser)); // Atualiza o saldo no localStorage
+      updateSaldoDisplay(); // Atualiza a exibição do saldo
 
-    if (!sellAllButton) {
-      sellAllButton = document.createElement("button");
-      sellAllButton.id = "sell-all-btn";
-      sellAllButton.textContent = `Vender Tudo - R$${totalValue.toFixed(2)}`;
-      sellAllButton.className = "sell-all-btn";
-
-      sellAllButton.addEventListener("click", () => {
-        itemsToSell.forEach((item) => (item.sold = true));
-        localStorage.setItem(userItemsKey, JSON.stringify(storedItems));
-
-        currentUser.saldo += totalValue;
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-        alert(`Você vendeu todos os itens por R$${totalValue.toFixed(2)}!`);
-        renderUserItems();
-        updateSaldoDisplay();
-        sellAllButton.remove();
-      });
-
-      const container = document.querySelector(".items-container");
-      container.insertBefore(sellAllButton, userItemsGrid);
-    } else {
-      sellAllButton.textContent = `Vender Tudo - R$${totalValue.toFixed(2)}`;
+      renderUserItems(); // Re-renderiza os itens
+      updateAvailableValueDisplay(); // Atualiza o valor total das skins disponíveis
     }
   };
 
@@ -88,10 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (items.length === 0) {
       userItemsGrid.innerHTML = "<p>Você ainda não ganhou itens.</p>";
+      updateAvailableValueDisplay(); // Atualiza o valor total quando não houver itens
       return;
     }
 
-    // Exibir os itens mais recentes primeiro
     const sortedItems = [...items].sort((a, b) => b.timestamp - a.timestamp);
 
     sortedItems.forEach((item) => {
@@ -117,28 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userItemsGrid.appendChild(itemElement);
     });
 
-    renderSellAllButton();
-  };
-
-  const sellItem = (item) => {
-    const storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
-    const itemIndex = storedItems.findIndex(
-      (storedItem) =>
-        storedItem.name === item.name &&
-        storedItem.image === item.image &&
-        !storedItem.sold
-    );
-
-    if (itemIndex !== -1) {
-      storedItems[itemIndex].sold = true;
-      localStorage.setItem(userItemsKey, JSON.stringify(storedItems));
-
-      currentUser.saldo += item.price;
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      updateSaldoDisplay();
-
-      renderUserItems();
-    }
+    updateAvailableValueDisplay(); // Atualiza o valor total das skins disponíveis
   };
 
   filterInput.addEventListener("input", () => {
