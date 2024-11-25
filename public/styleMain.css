@@ -612,7 +612,26 @@ main {
   background-color: #218838;
 }
 
+#filter-section {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
 
+#filter-input {
+  padding: 10px;
+  width: 300px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  background-color: #1e293b;
+  color: white;
+}
+
+#filter-input::placeholder {
+  color: #aaa;
+}
 
 
 

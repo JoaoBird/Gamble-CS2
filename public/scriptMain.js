@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const filterInput = document.getElementById("filter-input");
   const loginModal = document.getElementById("login-modal");
   const openLoginModalButton = document.getElementById("open-login-modal");
   const closeModalButton = document.getElementById("close-modal");
@@ -16,18 +17,28 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentUser = JSON.parse(localStorage.getItem("currentUser"));
   let isLoginMode = true;
 
+  // Definição global de `boxes`
+  const boxes = [
+    { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "/public/pages/img-pag/box1.png" },
+    { name: "Green Wood Dragon", price: 0.20, id: "green-wood-dragon", image: "/public/pages/img-pag/box2.png" },
+    { name: "Doppler Mining", price: 1.17, id: "doppler-mining", image: "/public/pages/img-pag/box3.png" },
+    { name: "Pandora's Box", price: 26.03, id: "pandoras-box", image: "/public/pages/img-pag/box4.png" },
+    { name: "Lazy Tiger", price: 58.99, id: "lazy-tiger", image: "/public/pages/img-pag/box5.png" },
+  ];
+
   // Alternar entre login e cadastro
   if (toggleLink) {
     toggleLink.addEventListener("click", () => {
       isLoginMode = !isLoginMode;
-      if (modalTitle) modalTitle.textContent = isLoginMode ? "Entrar" : "Cadastrar";
-      if (actionButton) actionButton.textContent = isLoginMode ? "Entrar" : "Cadastrar";
-      if (toggleText)
-        toggleText.innerHTML = isLoginMode
-          ? 'Não tem conta? <span style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>'
-          : 'Já tem conta? <span style="cursor: pointer; color: #4CAF50;">Entre</span>';
+      modalTitle.textContent = isLoginMode ? "Entrar" : "Cadastrar";
+      actionButton.textContent = isLoginMode ? "Entrar" : "Cadastrar";
+      toggleText.innerHTML = isLoginMode
+        ? 'Não tem conta? <span style="cursor: pointer; color: #4CAF50;">Cadastre-se</span>'
+        : 'Já tem conta? <span style="cursor: pointer; color: #4CAF50;">Entre</span>';
     });
   }
+
+
   [userNameDisplay, profilePic].forEach((element) => {
     element.addEventListener("click", () => {
       window.location.href = "./profile.html";
@@ -92,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       openLoginModalButton.style.display = "block";
       profilePic.style.display = "none";
     }
+    renderGrid(boxes);
     populateBoxes();
   }
 
@@ -147,9 +159,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     
-    
   }
-  
+  // Renderiza as caixas no grid
+  function renderGrid(filteredBoxes) {
+    gridContainer.innerHTML = ""; // Limpa a grade
+    filteredBoxes.forEach((box) => {
+      const boxElement = document.createElement("div");
+      boxElement.className = "grid-item";
+      boxElement.innerHTML = `
+        <img src="${box.image}" alt="${box.name}">
+        <h3>${box.name}</h3>
+        <p>R$${box.price.toFixed(2)}</p>
+        <button class="enter-box-btn" data-id="${box.id}">Entrar na Caixa</button>
+      `;
+      gridContainer.appendChild(boxElement);
+    });
+  }
+
+  // Filtrar dinamicamente com base no texto do input
+  filterInput.addEventListener("input", () => {
+    const searchText = filterInput.value.toLowerCase();
+    const filteredBoxes = boxes.filter((box) =>
+      box.name.toLowerCase().includes(searchText)
+    );
+    renderGrid(filteredBoxes);
+  });
+
+  // Inicializa a interface do usuário
+  updateUserInterface();
+
 
   // Sair
   if (logoutBtn) {

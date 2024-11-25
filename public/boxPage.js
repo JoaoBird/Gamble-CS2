@@ -104,12 +104,12 @@ document.addEventListener("DOMContentLoaded", () => {
     { name: "AWP Sun in Leo", price: 22.15, image: "/public/pages/img-itens/AWP-Sun-in-Leo.png" },
     ],
     "lazy-tiger": [
-  { name: "Butterfly Knife Tiger Tooth", price: 1634.7, image: "/public/pages/img-itens/Butterfly-Knife-Tiger-Tooth.png" },
-  { name: "Karambit Tiger Tooth", price: 1172.61, image: "/public/pages/img-itens/Karambit-Tiger-Tooth.png" },
-  { name: "M4A1-S Blood Tiger", price: 5.4, image: "/public/pages/img-itens/M4A1-S-Blood-Tiger.png" },
-  { name: "P250 Bengal Tiger", price: 12.2, image: "/public/pages/img-itens/P250-Bengal-Tiger.png" },
-  { name: "AUG Bengal Tiger", price: 6.29, image: "/public/pages/img-itens/AUG-Bengal-Tiger.png" }
-]
+    { name: "Butterfly Knife Tiger Tooth", price: 1634.7, image: "/public/pages/img-itens/Butterfly-Knife-Tiger-Tooth.png" },
+    { name: "Karambit Tiger Tooth", price: 1172.61, image: "/public/pages/img-itens/Karambit-Tiger-Tooth.png" },
+    { name: "M4A1-S Blood Tiger", price: 5.4, image: "/public/pages/img-itens/M4A1-S-Blood-Tiger.png" },
+    { name: "P250 Bengal Tiger", price: 12.2, image: "/public/pages/img-itens/P250-Bengal-Tiger.png" },
+    { name: "AUG Bengal Tiger", price: 6.29, image: "/public/pages/img-itens/AUG-Bengal-Tiger.png" }
+    ],
 
 
   };
