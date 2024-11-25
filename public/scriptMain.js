@@ -28,7 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
           : 'Já tem conta? <span style="cursor: pointer; color: #4CAF50;">Entre</span>';
     });
   }
-
+  [userNameDisplay, profilePic].forEach((element) => {
+    element.addEventListener("click", () => {
+      window.location.href = "./profile.html";
+    });
+    element.style.cursor = "pointer";
+  });
   // Ação de login/cadastro
   if (actionButton) {
     actionButton.addEventListener("click", () => {
@@ -94,8 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function populateBoxes() {
     const boxes = [
       { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "/public/pages/img-pag/box1.png" },
-      { name: "Green Wood Dragon", price: 0.10, id: "green-wood-dragon", image: "/public/pages/img-pag/box2.png" },
+      { name: "Green Wood Dragon", price: 0.20, id: "green-wood-dragon", image: "/public/pages/img-pag/box2.png" },
       { name: "Doppler Mining", price: 1.17, id: "doppler-mining", image: "/public/pages/img-pag/box3.png" },
+      { name: "Pandora's Box", price: 26.03, id: "pandoras-box", image: "/public/pages/img-pag/box4.png" },
+      { name: "Lazy Tiger", price: 58.99, id: "lazy-tiger", image: "/public/pages/img-pag/box5.png" },
     ];
   
     if (!gridContainer) return;

@@ -45,8 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const boxPrices = {
     "white-and-bright": 5.45,
-    "green-wood-dragon": 0.10,
-    "mystery-box": 10.00,
+    "green-wood-dragon": 0.20,
+    "doppler-mining": 1.17,
+    "pandoras-box":26.03,
+    "lazy-tiger":58.99,
+
   };
 
   
@@ -64,6 +67,51 @@ document.addEventListener("DOMContentLoaded", () => {
       { name: "P250 Franklin", price: 0.68, image: "/public/pages/img-itens/P250-Franklin.png" },
       { name: "Desert Eagle Tilted", price: 0.58, image: "/public/pages/img-itens/Desert-Tilted.png" },
     ],
+    "green-wood-dragon": [
+      { name: "M4A4 In Living Color", price: 8.5, image: "/public/pages/img-itens/M4A4-Color.png" },
+      { name: "AK-47 Ice Coaled", price: 4.78, image: "/public/pages/img-itens/AK-47-Ice.png" },
+      { name: "AWP Worm God", price: 1.39, image: "/public/pages/img-itens/AWP-Worm-God.png" },
+      { name: "M4A1-S Emphorosaur-S", price: 0.397, image: "/public/pages/img-itens/M4A1-Emphorosaur-S.png" },
+      { name: "MP9 Sand Scale", price: 0.149, image: "/public/pages/img-itens/MP9-Sand-Scale.png" },
+      { name: "SG553 Atlas", price: 0.129, image: "/public/pages/img-itens/SG553-Atlas.png" },
+      { name: "UMP-45 Gunsmoke", price: 0.036, image: "/public/pages/img-itens/UMP-45-Gunsmoke.png" },
+      { name: "Nova Sand Dune", price: 0.009, image: "/public/pages/img-itens/Nova-Sand-Dune.png" },
+      { name: "SCAR-20 Sand Mash", price: 0.008, image: "/public/pages/img-itens/SCAR-20-Sand-Mash.png" },
+      { name: "G3SG1 Desert Storm", price: 0.006, image: "/public/pages/img-itens/G3SG1-Desert-Storm.png" },
+    ],
+    "doppler-mining": [
+      { name: "Talon Knife Doppler", price: 990.92, image: "/public/pages/img-itens/Talon-Doppler.png" },
+      { name: "Gut Knife Doppler", price: 201.92, image: "/public/pages/img-itens/Gut-Doppler.png" },
+      { name: "MAC-10 Candy Apple", price: 0.134, image: "/public/pages/img-itens/MAC-10-Candy-Apple.png" },
+      { name: "G3SG1 Green Apple", price: 0.076, image: "/public/pages/img-itens/G3SG1-Green-Apple.png" },
+      { name: "MP5-SD Desert Strike", price: 0.075, image: "/public/pages/img-itens/MP5-SD-Desert-Strike.png" },
+      { name: "AK-47 Safari Mesh", price: 0.071, image: "/public/pages/img-itens/AK-47-Safari-Mesh.png" },
+      { name: "MP7 Motherboard", price: 0.055, image: "/public/pages/img-itens/MP7-Motherboard.png" },
+      { name: "UMP-45 Gunsmoke", price: 0.036, image: "/public/pages/img-itens/UMP-45-Gunsmoke.png" },
+      { name: "PP-Bizon Night Ops", price: 0.034, image: "/public/pages/img-itens/PP-Bizon-Night-Ops.png" },
+    ],
+    "pandoras-box": [
+    { name: "Sport Gloves Superconductor", price: 4007.68, image: "/public/pages/img-itens/Sport-Gloves-Superconductor.png" },
+    { name: "Moto Gloves Cool Mint", price: 148.98, image: "/public/pages/img-itens/Moto-Gloves-Cool-Mint.png" },
+    { name: "Hand Wraps Duct Tape", price: 85.82, image: "/public/pages/img-itens/Hand-Wraps-Duct-Tape.png" },
+    { name: "M9 Bayonet Doppler", price: 1305.51, image: "/public/pages/img-itens/M9-Bayonet-Doppler.png" },
+    { name: "Karambit Bright Water", price: 645.92, image: "/public/pages/img-itens/Karambit-Bright-Water.png" },
+    { name: "AWP Medusa", price: 1601.85, image: "/public/pages/img-itens/AWP-Medusa.png" },
+    { name: "M4A1-S Printstream", price: 184.07, image: "/public/pages/img-itens/M4A1-S-Printstream.png" },
+    { name: "AWP Neo-Noir", price: 22.24, image: "/public/pages/img-itens/AWP-Neo-Noir.png" },
+    { name: "AK-47 Ice Coaled", price: 4.78, image: "/public/pages/img-itens/AK-47-Ice.png" },
+    { name: "M4A1-S Decimator", price: 10.88, image: "/public/pages/img-itens/M4A1-S-Decimator.png" },
+    { name: "AWP Sun in Leo", price: 22.15, image: "/public/pages/img-itens/AWP-Sun-in-Leo.png" },
+    ],
+    "lazy-tiger": [
+  { name: "Butterfly Knife Tiger Tooth", price: 1634.7, image: "/public/pages/img-itens/Butterfly-Knife-Tiger-Tooth.png" },
+  { name: "Karambit Tiger Tooth", price: 1172.61, image: "/public/pages/img-itens/Karambit-Tiger-Tooth.png" },
+  { name: "M4A1-S Blood Tiger", price: 5.4, image: "/public/pages/img-itens/M4A1-S-Blood-Tiger.png" },
+  { name: "P250 Bengal Tiger", price: 12.2, image: "/public/pages/img-itens/P250-Bengal-Tiger.png" },
+  { name: "AUG Bengal Tiger", price: 6.29, image: "/public/pages/img-itens/AUG-Bengal-Tiger.png" }
+]
+
+
   };
 
   // Atualizar informações do usuário na interface
@@ -297,16 +345,10 @@ document.addEventListener("DOMContentLoaded", () => {
     results.forEach((item, index) => {
       const square = document.createElement("div");
       square.classList.add("grid-item");
-
-
-
-  
-
-
       rouletteContainer.appendChild(square);
   
       const interval = setInterval(() => {
-        const randomItem = items["white-and-bright"][Math.floor(Math.random() * items["white-and-bright"].length)];
+        const randomItem = items[boxId][Math.floor(Math.random() * items[boxId].length)];
         square.innerHTML = `
           <img src="${randomItem.image}" alt="${randomItem.name}" style="width: 100px;">
           <p>Carregando...</p>
@@ -365,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function openBoxes() {
-    const totalCost = boxPrices["white-and-bright"] * selectedMultiplier;
+    const totalCost = boxPrices[boxId] * selectedMultiplier;
   
     if (currentUser.saldo < totalCost) {
       alert("Saldo insuficiente!");
@@ -397,6 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (openOptionsContainer) {
+    const initialPrice = boxPrices[boxId];
     openOptionsContainer.innerHTML = `
       <div style="text-align: center; margin-bottom: 20px;">
         <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
@@ -406,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button data-count="5" class="quantity-btn">5x</button>
           <button data-count="10" class="quantity-btn">10x</button>
         </div>
-        <button id="open-box-btn">Abrir Caixa - R$${boxPrices["white-and-bright"].toFixed(2)}</button>
+        <button id="open-box-btn">Abrir Caixa - R$${initialPrice.toFixed(2)}</button>
         <p style="margin-top: 10px; color: #aaa; font-size: 14px;">Atenção: as skins só podem ser vendidas na página de Perfil do usuário.</p>
       </div>
     `;
@@ -419,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedMultiplier = parseInt(e.target.getAttribute("data-count"));
         document.getElementById(
           "open-box-btn"
-        ).textContent = `Abrir Caixa - R$${(boxPrices["white-and-bright"] * selectedMultiplier).toFixed(2)}`;
+        ).textContent = `Abrir Caixa - R$${(boxPrices[boxId] * selectedMultiplier).toFixed(2)}`;
       });
     });
     
