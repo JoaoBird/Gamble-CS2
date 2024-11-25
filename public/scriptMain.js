@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const boxes = [
       { name: "White and Bright", price: 5.45, id: "white-and-bright", image: "/public/pages/img-pag/box1.png" },
       { name: "Green Wood Dragon", price: 0.20, id: "green-wood-dragon", image: "/public/pages/img-pag/box2.png" },
-      { name: "Doppler Mining", price: 1.17, id: "doppler-mining", image: "/public/pages/img-pag/box3.png" },
+      { name: "Doppler Mining", price: 2.17, id: "doppler-mining", image: "/public/pages/img-pag/box3.png" },
       { name: "Pandora's Box", price: 26.03, id: "pandoras-box", image: "/public/pages/img-pag/box4.png" },
       { name: "Lazy Tiger", price: 58.99, id: "lazy-tiger", image: "/public/pages/img-pag/box5.png" },
     ];

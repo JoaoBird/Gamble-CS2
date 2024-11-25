@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const boxPrices = {
     "white-and-bright": 5.45,
     "green-wood-dragon": 0.20,
-    "doppler-mining": 1.17,
+    "doppler-mining": 2.17,
     "pandoras-box":26.03,
     "lazy-tiger":58.99,
 
@@ -81,6 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ],
     "doppler-mining": [
       { name: "Talon Knife Doppler", price: 990.92, image: "/public/pages/img-itens/Talon-Doppler.png" },
+      { name: "Bayonet Doppler", price: 683.82, image: "/public/pages/img-itens/Bayonet-Doppler.png" },
+      { name: "Stiletto Knife Doppler", price: 677.92, image: "/public/pages/img-itens/Stiletto-Knife-Doppler.png" },
+      { name: "Bowie Knife Doppler", price: 434.92, image: "/public/pages/img-itens/Bowie-Knife-Doppler.png" },
       { name: "Gut Knife Doppler", price: 201.92, image: "/public/pages/img-itens/Gut-Doppler.png" },
       { name: "MAC-10 Candy Apple", price: 0.134, image: "/public/pages/img-itens/MAC-10-Candy-Apple.png" },
       { name: "G3SG1 Green Apple", price: 0.076, image: "/public/pages/img-itens/G3SG1-Green-Apple.png" },
@@ -171,42 +174,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  function renderItems() {
-    // Limpa os itens existentes
-    itemListContainer.innerHTML = "";
-  
-    // Calcula as chances dos itens
-    const itemWithChances = calculateItemChances(items[boxId]);
-  
-    // Renderiza cada item
-    itemWithChances.forEach((item) => {
-      const itemElement = document.createElement("div");
-      itemElement.classList.add("grid-item");
-      itemElement.innerHTML = `
-        <img src="${item.image}" alt="${item.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
-        <h3>${item.name}</h3>
-        <p>R$${item.price.toFixed(2)}</p>
-        <p>Chance: ${item.chance.toFixed(2)}%</p>
-      `;
-      itemListContainer.appendChild(itemElement);
-    });
-  }
-  
+function renderItems() {
+  // Limpa os itens existentes
+  itemListContainer.innerHTML = "";
+
+  // Calcula as chances dos itens
+  const itemWithChances = calculateItemChances(items[boxId]);
+
+  // Renderiza cada item
+  itemWithChances.forEach((item) => {
+    const itemElement = document.createElement("div");
+    itemElement.classList.add("grid-item");
+    itemElement.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" style="width: 100%; max-width: 150px; margin-bottom: 10px;">
+      <h3>${item.name}</h3>
+      <p>R$${item.price.toFixed(2)}</p>
+      <p>Chance: ${item.chance.toFixed(2)}%</p>
+    `;
+    itemListContainer.appendChild(itemElement);
+  });
+}
+
   // Função chamada após o carregamento inicial
   renderItems();
   
   function saveItemsToUserProfile(newItems) {
     let storedItems = JSON.parse(localStorage.getItem(userItemsKey)) || [];
-    storedItems = [...storedItems, ...newItems];
+    const itemsWithTimestamp = newItems.map((item) => ({
+      ...item,
+      timestamp: Date.now(), // Adiciona o timestamp atual
+    }));
+    storedItems = [...storedItems, ...itemsWithTimestamp];
     localStorage.setItem(userItemsKey, JSON.stringify(storedItems));
   }
+  
 
   function calculateItemChances(items) {
-    const totalWeight = items.reduce((sum, item) => sum + 1 / item.price, 0);
-    return items.map((item) => ({
-      ...item,
-      chance: ((1 / item.price) / totalWeight) * 100,
-    }));
+    // Define as chances específicas para os itens da caixa "doppler-mining"
+    const customChances = {
+      "Talon Knife Doppler": 0.01,
+      "Bayonet Doppler": 0.02,
+      "Stiletto Knife Doppler": 0.03,
+      "Bowie Knife Doppler": 0.04,
+      "Gut Knife Doppler": 0.05,
+    };
+  
+    // Verifica se a caixa é "doppler-mining"
+    const isDopplerMining = boxId === "doppler-mining";
+  
+    // Calcula as chances manualmente ou com a lógica padrão
+    return items.map((item) => {
+      if (isDopplerMining && customChances[item.name] !== undefined) {
+        return { ...item, chance: customChances[item.name] };
+      }
+  
+      // Lógica padrão para outras caixas
+      const totalWeight = items.reduce((sum, i) => sum + 1 / i.price, 0);
+      return { ...item, chance: ((1 / item.price) / totalWeight) * 100 };
+    });
   }
   
   function chooseItemBasedOnProbability(items, lastSelectedItems) {
